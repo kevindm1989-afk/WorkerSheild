@@ -1,6 +1,7 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Animated,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -15,6 +16,12 @@ import { useColors } from "@/hooks/useColors";
 import { AgentChip } from "@/components/AgentChip";
 import { Markdown } from "@/components/Markdown";
 import { runAgentPipeline, type AgentState } from "@/lib/agentClient";
+import {
+  isVoiceDictationAvailable,
+  startVoiceDictation,
+  type VoiceSession,
+} from "@/lib/voice";
+import { exportFinalAsPdf } from "@/lib/pdf";
 
 type Role = "Both Roles" | "Steward" | "JHSC";
 
@@ -36,7 +43,85 @@ export default function HomeScreen() {
   const [agents, setAgents] = useState<AgentState[]>([]);
   const [finalOut, setFinalOut] = useState<string | null>(null);
 
+  const [listening, setListening] = useState(false);
+  const [voiceAvailable] = useState(() => isVoiceDictationAvailable());
+  const voiceSessionRef = useRef<VoiceSession | null>(null);
+  const baseProblemRef = useRef("");
+
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+
   const scrollRef = useRef<ScrollView>(null);
+
+  useEffect(
+    () => () => {
+      voiceSessionRef.current?.stop();
+    },
+    [],
+  );
+
+  const stopVoice = useCallback(() => {
+    voiceSessionRef.current?.stop();
+    voiceSessionRef.current = null;
+    setListening(false);
+  }, []);
+
+  const toggleVoice = useCallback(() => {
+    if (listening) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+      stopVoice();
+      return;
+    }
+    if (!voiceAvailable) {
+      setErrorMsg(
+        "Voice input is not supported on this device. Try Chrome or Safari on a phone.",
+      );
+      return;
+    }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    baseProblemRef.current = problem ? problem.replace(/\s+$/, "") + " " : "";
+    const session = startVoiceDictation({
+      onPartial: (text) => {
+        setProblem(baseProblemRef.current + text);
+      },
+      onFinal: (text) => {
+        baseProblemRef.current = baseProblemRef.current + text + " ";
+        setProblem(baseProblemRef.current);
+      },
+      onError: (msg) => {
+        setErrorMsg(msg);
+        stopVoice();
+      },
+      onEnd: () => {
+        setListening(false);
+        voiceSessionRef.current = null;
+      },
+    });
+    if (session) {
+      voiceSessionRef.current = session;
+      setListening(true);
+    }
+  }, [listening, voiceAvailable, problem, stopVoice]);
+
+  const handleExportPdf = useCallback(async () => {
+    if (!finalOut || exporting) return;
+    setExportError(null);
+    setExporting(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    try {
+      await exportFinalAsPdf({
+        local,
+        employer,
+        role,
+        problem,
+        finalMarkdown: finalOut,
+      });
+    } catch (e) {
+      setExportError(e instanceof Error ? e.message : "Export failed");
+    } finally {
+      setExporting(false);
+    }
+  }, [finalOut, exporting, local, employer, role, problem]);
 
   const updateAgent = useCallback(
     (key: string, label: string, patch: Partial<AgentState>) => {
@@ -58,8 +143,10 @@ export default function HomeScreen() {
 
   const handleRun = useCallback(async () => {
     if (!problem.trim() || running) return;
+    if (listening) stopVoice();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setRunning(true);
+    setExportError(null);
     setErrorMsg(null);
     setAgents([]);
     setFinalOut(null);
@@ -120,13 +207,15 @@ export default function HomeScreen() {
 
   const reset = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    if (listening) stopVoice();
     setProblem("");
     setAgents([]);
     setFinalOut(null);
     setErrorMsg(null);
+    setExportError(null);
     setRunning(false);
     scrollRef.current?.scrollTo({ y: 0, animated: true });
-  }, []);
+  }, [listening, stopVoice]);
 
   const specialistAgents = useMemo(
     () => agents.filter((a) => a.key !== "final" && a.output),
@@ -163,6 +252,48 @@ export default function HomeScreen() {
         <View
           style={[styles.divider, { backgroundColor: colors.primary }]}
         />
+      </View>
+
+      {/* REPRISAL BANNER */}
+      <View style={styles.section}>
+        <View
+          style={[
+            styles.reprisalBanner,
+            { borderColor: colors.primary, backgroundColor: colors.card },
+          ]}
+        >
+          <View
+            style={[styles.reprisalTag, { backgroundColor: colors.primary }]}
+          >
+            <Text
+              style={[
+                styles.reprisalTagText,
+                { color: colors.primaryForeground },
+              ]}
+            >
+              ⚠ REPRISAL PROTECTION
+            </Text>
+          </View>
+          <Text style={[styles.reprisalBody, { color: colors.foreground }]}>
+            Filing a complaint, asking about your rights, or participating in an
+            investigation is{" "}
+            <Text style={{ fontFamily: "Inter_700Bold" }}>legally protected</Text>{" "}
+            under{" "}
+            <Text style={{ fontFamily: "Inter_700Bold", color: colors.primary }}>
+              OHSA s.50
+            </Text>
+            ,{" "}
+            <Text style={{ fontFamily: "Inter_700Bold", color: colors.primary }}>
+              ESA Part XVIII
+            </Text>
+            , and{" "}
+            <Text style={{ fontFamily: "Inter_700Bold", color: colors.primary }}>
+              OHRC s.8
+            </Text>
+            . Document any retaliation immediately — schedule changes,
+            discipline, isolation, monitoring.
+          </Text>
+        </View>
       </View>
 
       {/* FORM */}
@@ -236,14 +367,47 @@ export default function HomeScreen() {
         />
 
         <View style={{ height: 14 }} />
-        <FieldLabel text="PROBLEM" />
+        <View style={styles.problemHeader}>
+          <FieldLabel text="PROBLEM" />
+          <Pressable
+            onPress={toggleVoice}
+            disabled={running}
+            style={({ pressed }) => [
+              styles.micBtn,
+              {
+                borderColor: listening ? "#E5484D" : colors.primary,
+                backgroundColor: listening
+                  ? "#E5484D"
+                  : pressed
+                    ? colors.card
+                    : "transparent",
+                opacity: running ? 0.5 : 1,
+              },
+            ]}
+          >
+            {listening ? <PulsingDot /> : null}
+            <Text
+              style={[
+                styles.micBtnText,
+                { color: listening ? "#FFFFFF" : colors.primary },
+              ]}
+            >
+              {listening ? "STOP" : voiceAvailable ? "● DICTATE" : "● VOICE"}
+            </Text>
+          </Pressable>
+        </View>
         <Input
           value={problem}
           onChangeText={setProblem}
           multiline
           minHeight={140}
-          placeholder="Describe what happened. Be specific. Include dates, names, and what management said."
+          placeholder="Describe what happened. Be specific. Include dates, names, and what management said. Tap DICTATE to use voice."
         />
+        {listening && (
+          <Text style={[styles.listeningHint, { color: colors.primary }]}>
+            ● LISTENING — speak clearly, tap STOP when done
+          </Text>
+        )}
       </View>
 
       {/* ACTIVATE BUTTON */}
@@ -384,23 +548,95 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <Pressable
-            onPress={reset}
-            style={({ pressed }) => [
-              styles.newProblemBtn,
-              {
-                borderColor: colors.primary,
-                backgroundColor: pressed ? colors.card : "transparent",
-              },
-            ]}
-          >
-            <Text style={[styles.newProblemText, { color: colors.primary }]}>
-              + NEW PROBLEM
+          <View style={styles.finalActionsRow}>
+            <Pressable
+              onPress={handleExportPdf}
+              disabled={exporting}
+              style={({ pressed }) => [
+                styles.finalActionBtn,
+                {
+                  borderColor: colors.primary,
+                  backgroundColor: exporting
+                    ? colors.muted
+                    : pressed
+                      ? "#B88A14"
+                      : colors.primary,
+                },
+              ]}
+            >
+              {exporting ? (
+                <ActivityIndicator
+                  size="small"
+                  color={colors.primaryForeground}
+                />
+              ) : (
+                <Text
+                  style={[
+                    styles.finalActionText,
+                    { color: colors.primaryForeground },
+                  ]}
+                >
+                  ⤓ SAVE AS PDF
+                </Text>
+              )}
+            </Pressable>
+            <Pressable
+              onPress={reset}
+              style={({ pressed }) => [
+                styles.finalActionBtn,
+                {
+                  borderColor: colors.primary,
+                  backgroundColor: pressed ? colors.card : "transparent",
+                },
+              ]}
+            >
+              <Text style={[styles.finalActionText, { color: colors.primary }]}>
+                + NEW PROBLEM
+              </Text>
+            </Pressable>
+          </View>
+          {exportError && (
+            <Text style={[styles.exportError, { color: colors.danger }]}>
+              {exportError}
             </Text>
-          </Pressable>
+          )}
         </View>
       )}
     </ScrollView>
+  );
+}
+
+function PulsingDot() {
+  const pulse = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 0.3,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse]);
+  return (
+    <Animated.View
+      style={{
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: "#FFFFFF",
+        opacity: pulse,
+        marginRight: 6,
+      }}
+    />
   );
 }
 
@@ -607,16 +843,75 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_800ExtraBold",
     letterSpacing: 2,
   },
-  newProblemBtn: {
+  finalActionsRow: {
     marginTop: 14,
+    flexDirection: "row",
+    gap: 10,
+  },
+  finalActionBtn: {
+    flex: 1,
     paddingVertical: 14,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderRadius: 4,
     alignItems: "center",
+    justifyContent: "center",
+    minHeight: 48,
   },
-  newProblemText: {
+  finalActionText: {
     fontSize: 12,
     fontFamily: "Inter_800ExtraBold",
+    letterSpacing: 1.4,
+  },
+  exportError: {
+    marginTop: 8,
+    fontSize: 11,
+    fontFamily: "Inter_600SemiBold",
+    letterSpacing: 0.6,
+    textAlign: "center",
+  },
+  reprisalBanner: {
+    borderWidth: 1,
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  reprisalTag: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  reprisalTagText: {
+    fontSize: 10,
+    fontFamily: "Inter_800ExtraBold",
     letterSpacing: 1.6,
+  },
+  reprisalBody: {
+    fontSize: 12,
+    fontFamily: "Inter_400Regular",
+    lineHeight: 18,
+    padding: 12,
+  },
+  problemHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  micBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderRadius: 4,
+  },
+  micBtnText: {
+    fontSize: 10,
+    fontFamily: "Inter_800ExtraBold",
+    letterSpacing: 1.2,
+  },
+  listeningHint: {
+    marginTop: 6,
+    fontSize: 10,
+    fontFamily: "Inter_700Bold",
+    letterSpacing: 1.2,
   },
 });

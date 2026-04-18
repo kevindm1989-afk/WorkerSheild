@@ -1,4 +1,5 @@
 import { Router, type IRouter, type Request, type Response } from "express";
+import rateLimit from "express-rate-limit";
 import Anthropic from "@anthropic-ai/sdk";
 import {
   AGENT_LABELS,
@@ -63,7 +64,17 @@ function sse(res: Response, event: string, data: unknown): void {
   res.write(`data: ${JSON.stringify(data)}\n\n`);
 }
 
-router.post("/agent/run", async (req: Request, res: Response) => {
+const agentLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 20,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: {
+    error: "Rate limit exceeded. Please try again in an hour.",
+  },
+});
+
+router.post("/agent/run", agentLimiter, async (req: Request, res: Response) => {
   const body = req.body as RunBody;
   const local = (body.local ?? "").trim();
   const employer = (body.employer ?? "").trim();
