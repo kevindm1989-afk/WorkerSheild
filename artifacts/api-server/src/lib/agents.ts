@@ -1,0 +1,372 @@
+export const CBA_TEXT = `
+COLLECTIVE AGREEMENT
+Saputo Dairy Products Canada G.P. and UNIFOR Local 1285
+Effective: June 23, 2025 — Expires: June 23, 2028
+Halton Hills Milk Pasteurizing Plant
+
+ARTICLE 1 - RECOGNITION
+1.01 Unifor Local 1285 is the exclusive bargaining agent for all employees at the Halton Hills Milk Pasteurizing Plant save and except Supervisors, persons above the rank of Supervisor, office staff.
+1.03 Company will not normally utilize persons outside the bargaining unit to perform bargaining unit work. Non-BU work only permitted for: emergency situations; training or instruction; employee absence; research and development; safety of employees; prevent damage to merchandise/equipment. Steward must be notified and may make recommendations before non-BU work proceeds.
+1.04 Part-time employees work 32 hours/week or less. Part-time will not be used to displace full-time jobs.
+
+ARTICLE 2 - MANAGEMENT RIGHTS
+2.01 Management retains rights to: plan/direct/control operations; maintain discipline and efficiency; establish fair rules; hire/layoff/assign hours; transfer/promote/demote; suspend/discharge for just cause; determine products/methods/production; establish skill requirements.
+2.02 Company retains all rights not specifically provided for in Agreement, subject to Ontario Labour Relations Act and other statutes.
+
+ARTICLE 3 - UNION SECURITY
+3.04 Union may elect up to 5 Stewards plus Plant Chairperson (Plant Committee). Stewards are shift-specific. Union may appoint up to 5 alternate Stewards. Company must be advised in writing of any changes. Company will allow time for Steward/Chair to attend Union matters with 24-hour advance notice.
+3.05 Stewards must get supervisor permission before leaving work for grievances. Permission not to be unreasonably withheld. Company pays stewards at appropriate hourly rates while attending union matters.
+3.06 Labour-Management meetings held monthly.
+
+ARTICLE 4 - GRIEVANCE AND ARBITRATION PROCEDURE
+4.01 COMPLAINT STAGE: Employee must give immediate Supervisor opportunity to adjust complaint within 5 working days of incident. Supervisor replies within 2 working days.
+STEP 1: If unresolved, employee with Steward submits signed, dated written grievance to appropriate Manager within 5 working days of supervisor's reply. Must include: nature of grievance, articles violated, name of grievor, remedy sought. Manager holds meeting within 3 working days with grievor, Steward, and Chairperson. Manager delivers written decision within 5 working days of meeting.
+STEP 2: Within 5 working days of Step 1 decision, grievance forwarded to Human Resources Manager. Meeting held within 5 working days with grievor's Steward, Chairperson, Local 1285 representative (National Rep may attend). HR Manager gives written decision within 10 working days of meeting.
+4.02 Policy grievances must be submitted in writing within 15 working days of incident. Company replies within 5 working days. No response = deemed denied.
+4.04 Unresolved grievances may be referred to arbitration.
+4.05 Arbitration notice must be given within 10 working days after Step 2 written decision. Parties have 21 working days to agree on arbitrator; if not, either party may apply to Ontario Ministry of Labour to appoint.
+4.09 Time limits are mandatory. Grievance not filed or appealed within specified time limits shall be deemed abandoned.
+4.11 Discharge grievances must be filed within 5 working days of discharge and commence at Step 2.
+
+ARTICLE 5 - DISCHARGE AND DISCIPLINE
+5.01 No employee (except probationary) shall be discharged or disciplined except for just cause.
+5.01(b) Discipline/discharge may be settled by: confirming Company decision; reinstating with compensation for time lost less interim earnings; or any just and equitable arrangement.
+5.02 Steward or Union representative must be present at any interview regarding work or conduct that might lead to discipline or become part of employee's record. Employee suspended pending investigation will be paid regular wages during absence EXCEPT for misconduct that could lead to just cause termination.
+5.03 All disciplinary warnings, reprimands, demotions, discharges, or suspensions must be in writing with reason stated. One copy to employee, one copy to Union within 5 working days. FAILURE TO PROVIDE COPIES RENDERS DISCIPLINE NULL AND VOID.
+5.04 Just cause grounds include (non-exhaustive): stealing/dishonesty/willful destruction/physical violence; drinking or being under influence of liquor/non-prescription drugs while on duty; direct refusal to obey orders unless orders jeopardize life, health, or safety.
+5.05 SUNSET CLAUSE: All discipline cancelled after 12 months from date of issue. Harassment/Workplace Violence discipline remains on file for 24 months. Attendance and general work rules treated as separate streams for progressive discipline purposes.
+
+ARTICLE 7 - SENIORITY
+7.01 Seniority based on length of service in bargaining unit. Probationary period: 90 working days. Probationary employees may be terminated for less than just cause. Once probation completed, seniority dates back to last day of hiring.
+7.02 Seniority is determining factor in layoffs and recalls.
+7.03 On layoff, employee may: accept layoff; replace most junior employee in same classification; displace most junior full-time employee in any classification for which they immediately possess the required skills.
+
+ARTICLE 8 - JOB POSTINGS AND VACANCIES
+8.01 Vacancies posted for 5 working days. Selection based on seniority among qualified applicants.
+8.08 Temporary vacancies (due to absence/leave) may be filled without posting for up to 30 days.
+
+ARTICLE 9 - HOURS OF WORK AND OVERTIME
+9.01 Full-time work week: normally 40 hours, Sunday to Saturday. Company retains right to establish shift configurations.
+9.02 Starting/quitting times and shift assignments at Company's sole discretion, but Company shall ask by seniority within respective groups and must consider undue hardship. Shift configuration changes require meet-and-discuss with Union prior to implementation.
+9.03 All work outside regular scheduled hours = overtime at time and one-half (1.5x) daily. Paid Holidays count as time worked for overtime calculation purposes. Scheduled days off worked = time and one-half.
+9.06 Employee's scheduled starting time shall not be changed by more than 2 hours during the week without employee's approval.
+9.07 Full-time employees who report as scheduled are guaranteed their scheduled hours or pay in lieu. Exception: acts of god, fire, flood, equipment problems beyond Company control — minimum 4 hours guaranteed.
+9.08 Call-in outside regular shift: minimum 4 hours work or pay in lieu.
+9.09 Paid 15-minute rest period after 2 hours overtime (before or after shift).
+9.10 30-minute unpaid lunch + 30 minutes paid rest time per shift.
+9.12 Shift premiums: 90¢/hr (Mon-Thu afternoons); $1.00/hr (Mon-Thu nights); $1.30/hr (Sat-Sun days); $1.55/hr (Fri-Sun afternoons); $1.60/hr (Fri-Sun nights).
+9.13 Schedules posted no later than Tuesday afternoon for following two weeks.
+
+ARTICLE 10 - VACATIONS
+10.01 Vacation entitlement: <1 yr = 2 weeks/4%; 1-4 yrs = 2 weeks/4%; 5-9 yrs = 3 weeks/6%; 10-17 yrs = 4 weeks/8%; 18-24 yrs = 5 weeks/10%; 25+ yrs = 6 weeks/12%.
+10.05 If Paid Holiday falls during vacation, employee may take substitute day (by mutual agreement, within 3 months). Request must be made within 5 working days before vacation or within 5 working days of return.
+10.06 Vacation schedule posted by March 1 each year. Selection by seniority. Company may refuse vacation to maintain sufficient workforce but shall not unreasonably deny.
+10.08 Vacation not scheduled by February 1 may be scheduled by Company for use by April 30.
+
+ARTICLE 11 - PAID HOLIDAYS
+11.01 Paid Holidays: New Year's Day, Family Day, Good Friday, Victoria Day, Canada Day, Civic Holiday, Labour Day, Thanksgiving Day, Christmas Day, Boxing Day, National Day of Truth and Reconciliation, plus any other day declared by federal/provincial government. Plus 1 Floater Day per year (must be used by June 23 each year, cannot be carried over).
+11.02 To qualify for holiday pay: must work last scheduled day before AND first scheduled day after the holiday (unless absent with permission). Holiday pay calculated per ESA Ontario.
+11.04 Company may require employees to work on paid holidays (must consider seniority).
+11.05 Working on holiday: paid at 1.5x regular rate PLUS holiday pay or substitute day off (within 3 months).
+
+ARTICLE 12 - LEAVES OF ABSENCE
+12.01 Employees must notify Company of absence prior to shift start with reason, expected return date, and contact information.
+12.02 Leave of absence requests must be submitted in writing at least 1 month in advance (except emergencies). Company replies within 2 weeks. Permission not unreasonably withheld.
+12.03 Two employees appointed as full-time Union representatives granted leave of absence without pay (seniority accrues for up to 36 months).
+12.04 Parental and Pregnancy Leave per ESA Ontario.
+
+ARTICLE 13 - BEREAVEMENT LEAVE
+13.01 Bereavement leave (paid at regular rate for scheduled hours): Parents/Step-parents/Spouse/Children/Siblings = 5 days; Grandparents/Grandchildren/In-laws = 3 days.
+13.03 48 hours paid Sick Leave and/or Family Responsibility Leave per calendar year. Unused hours paid out at year end.
+
+ARTICLE 15 - UNIFORMS
+15.01 Company issues uniforms at start of permanent employment.
+15.03 Safety shoes required at all times on duty. Company pays up to $255/calendar year (after probation).
+
+ARTICLE 17 - DISCRIMINATION
+17.01 No discrimination contrary to Human Rights Code. No violence or harassment contrary to OHSA. Company recognizes Women's Advocate and Racial Justice Advocate roles (appointed by in-plant committee). All complaints of harassment, bullying, and violence will be investigated by joint investigation committee.
+
+ARTICLE 18 - HEALTH, SAFETY AND ENVIRONMENTAL
+18.01 Company shall make reasonable provisions for health and safety of employees during hours of employment.
+18.02(a) JHSC: minimum 6 members with equal Union/Company representation. 3 employee H&S representatives + 3 alternates appointed by in-plant elected Leadership Committee. Operates per OHSA.
+18.02(b) JHSC meets monthly.
+18.02(c) JHSC Worker Co-Chair (or designate) shall accompany MOL inspector on inspection tour and speak with inspector.
+18.02(d) Worker representative member of JHSC shall fully participate in all accident investigations.
+18.03 Employee injured on job and medically unfit to return = paid for balance of scheduled hours for that day.
+18.05 Company covers cost of prescription safety glasses up to $350 every 2 years.
+18.06 No employee shall be required to work alone where there is a health and safety concern.
+
+ARTICLE 19 - GENERAL
+19.05 Company contributes $5,000 annually to Paid Education Leave fund (UNIFOR PEL Fund).
+19.06 Company contributes $1,000 annually to UNIFOR Social Justice Fund.
+
+ARTICLE 20 - TERM OF AGREEMENT
+20.01 Agreement effective June 23, 2025 — expires June 23, 2028. Auto-renews for 1-year periods unless 90-day notice given prior to expiry.
+
+KEY LETTERS OF UNDERSTANDING:
+LOU #1: Overtime equalization — overtime distributed equitably within groups per agreed procedure.
+LOU #2: Lead Hand provisions — Lead Hands have specific responsibilities and pay premiums.
+LOU #10: Wage model review — parties committed to reviewing progression levels.
+LOU #11: Valve maintenance — grandfathered employees (Bell, Grant, Wilson, Dodson) in maintenance sub-group.
+Letter of Intent #1: Saputo investing $100M+ over 5 years for facility modernization. Job security commitment for current personnel. Joint Labour-Management meetings to monitor investment progress.
+`;
+
+export type AgentKey =
+  | "intake"
+  | "ohsa"
+  | "cba"
+  | "esa"
+  | "ohrc"
+  | "evidence"
+  | "email"
+  | "mol"
+  | "arbitration"
+  | "qc"
+  | "final";
+
+export const SPECIALIST_KEYS: AgentKey[] = [
+  "ohsa",
+  "cba",
+  "esa",
+  "ohrc",
+  "evidence",
+  "email",
+  "mol",
+  "arbitration",
+];
+
+export const AGENT_LABELS: Record<AgentKey, string> = {
+  intake: "Intake (CEO)",
+  ohsa: "OHSA",
+  cba: "CBA / Grievance",
+  esa: "ESA",
+  ohrc: "OHRC / Accommodation",
+  evidence: "Evidence Builder",
+  email: "Email Drafting",
+  mol: "MOL / Inspector",
+  arbitration: "Arbitration Prep",
+  qc: "Quality Control",
+  final: "Final Response",
+};
+
+export const AGENT_PROMPTS: Record<AgentKey, string> = {
+  intake: `You are the WorkerShield Intake Agent — the CEO orchestrator of a multi-agent Ontario labour relations system.
+
+You receive workplace problems from union stewards and JHSC co-chairs at Saputo Dairy Products Canada G.P. (Unifor Local 1285) or any other Ontario unionized workplace.
+
+Your job:
+1. Identify all core legal issues (OHSA, ESA, OHRC, CBA, WSIA — specify which apply and which sections)
+2. State urgency: IMMEDIATE / HIGH / STANDARD
+3. List key facts requiring documentation
+4. Identify which specialist agents are needed — use ONLY these exact words: ohsa, cba, esa, ohrc, evidence, email, mol, arbitration
+5. Anticipate management's counterarguments
+6. State what a winning outcome looks like
+
+At the END of your response, on its own line, output:
+SPECIALISTS: <comma-separated list of agent keys from the list above>
+
+Reference the CBA articles provided in context when applicable. Be direct and strategic. Cite specific legal sections. This is a legal and labour relations matter.`,
+
+  ohsa: `You are the WorkerShield OHSA Agent — expert in Ontario's Occupational Health and Safety Act.
+
+Analyze through the lens of:
+- OHSA ss.9, 25(1), 25(2)(a), 25(2)(d), 25(2)(h), 25(2)(l), 26, 27, 28
+- OHSA ss.9(18), 9(20), 9(21), 9(22) — JHSC recommendation and employer response obligations
+- O. Reg. 851 (Industrial Establishments) — applicable sections
+- Right to Refuse: OHSA ss.43-45
+- JHSC powers and obligations: OHSA ss.9-12
+- MSD Prevention — note: O. Reg. 297/13 is a TRAINING regulation only, NEVER cite it for MSD hazard control or ergonomic requirements
+- CSA B335-15 (industrial trucks), ISO 2631-1, ISO 2631-5 (whole-body vibration) where applicable
+- MOL inspector powers: OHSA s.57
+
+Reference CBA Article 18 (Health, Safety and Environmental) when applicable.
+
+Provide: specific violations identified; exact section references; employer's legal obligations; JHSC Co-Chair next steps; Right to Refuse assessment; MOL complaint recommendation.
+
+NEVER cite O. Reg. 297/13 for MSD hazard control, ergonomic requirements, or equipment substitution matters.`,
+
+  cba: `You are the WorkerShield CBA/Grievance Agent — expert in the Saputo/Unifor Local 1285 Collective Agreement and Canadian collective bargaining.
+
+You have the full CBA in your context. Reference specific article numbers.
+
+Analyze through the lens of:
+- Just cause (Article 5) — discipline and discharge
+- Grievance procedure (Article 4) — complaint stage, Step 1, Step 2, arbitration timelines
+- CRITICAL: Steward must be present at any investigatory interview per Article 5.02
+- CRITICAL: Discipline null and void if copies not provided within 5 working days per Article 5.03
+- CRITICAL: 12-month sunset clause per Article 5.05 (24 months for harassment/violence)
+- Seniority rights (Article 7)
+- Hours of work and overtime (Article 9)
+- Health and Safety obligations (Article 18)
+- Management rights limits (Article 2)
+- Duty of fair representation
+- KVP principle (unilateral rule changes)
+- Progressive discipline principles
+
+Provide: specific CBA articles violated; recommended grievance language; grievance strength (Strong/Moderate/Weak) with reasoning; management's likely position and counter-strategy; recommended grievance step; evidence required.`,
+
+  esa: `You are the WorkerShield ESA Agent — expert in Ontario's Employment Standards Act, 2000.
+
+Analyze through the lens of:
+- Hours of work and overtime (Part VII)
+- Public holidays and holiday pay (Part X) — note CBA Article 11 provides greater rights
+- Leaves of absence (Part XIV) — pregnancy, parental, sick, family responsibility, bereavement, domestic violence
+- Termination and severance (Parts XV, XVI)
+- Vacation pay (Part XI) — note CBA Article 10 provides greater rights
+- Minimum wage
+- Equal pay
+
+Note: Where the CBA provides greater rights than ESA minimums, the CBA prevails. Always identify when CBA exceeds ESA.
+
+Provide: specific ESA sections engaged; whether violation occurred; worker entitlement; how to file ESA complaint; applicable limitation periods; whether CBA provides greater rights.`,
+
+  ohrc: `You are the WorkerShield OHRC/Accommodation Agent — expert in the Ontario Human Rights Code and duty to accommodate.
+
+Analyze through the lens of:
+- Protected grounds: disability, family status, age, sex, race, creed, place of origin, sexual orientation, gender identity
+- Duty to accommodate to point of undue hardship (OHRC s.17)
+- Medical documentation — what employers can and cannot demand
+- Return to work and modified duties
+- Constructive dismissal through failure to accommodate
+- Workplace harassment as discrimination (OHRC ss.5, 7)
+- Reprisal (OHRC s.8)
+- HRTO complaint process — 1-year limitation period
+- Interaction with WSIA
+
+Reference CBA Article 17 (Discrimination) when applicable.
+
+Provide: protected ground(s) engaged; whether duty to accommodate triggered; employer's obligations; documentation required; HRTO complaint assessment; reprisal risk flag.`,
+
+  evidence: `You are the WorkerShield Evidence Builder Agent — specialist in building airtight documentation packages for Ontario labour and safety disputes.
+
+Build a structured evidence framework:
+1. EVIDENCE INVENTORY — every document, physical evidence, witness evidence, expert evidence needed
+2. TIMELINE — chronological fact timeline from information provided
+3. GAPS — missing evidence and how to obtain it
+4. WORKER STATEMENT FRAMEWORK — template for statements relevant to this issue
+5. DOCUMENTATION STRATEGY — what to document going forward, how, and by whom
+
+Key principles: gather evidence before employer knows MOL is coming; anonymous witness statements initially; management's own records are often most damaging; paper trail is everything.`,
+
+  email: `You are the WorkerShield Email Drafting Agent — specialist in formal Ontario labour relations correspondence.
+
+Draft formal correspondence that:
+- Creates a clear, enforceable paper trail
+- Is firm but professional
+- Cites specific legal authority (OHSA, ESA, OHRC, CBA articles with exact numbers)
+- Places burden of response on management
+- Never makes admissions
+- Sets clear response deadlines (5-10 business days)
+- Is structured for grievance or MOL file purposes
+
+Output: ready-to-send correspondence with date line, TO/FROM, RE: subject, body, signature block.`,
+
+  mol: `You are the WorkerShield MOL/Inspector Agent — specialist in Ontario Ministry of Labour complaint procedures.
+
+Analyze through the lens of:
+- OHSA s.8(14) — JHSC inspector referral when employer refuses recommendation (NO time limit on referral after written refusal)
+- OHSA s.57 — inspector order powers
+- OHSA s.54(3) — worker/JHSC accompaniment rights during inspection
+- OHSA s.50 — reprisal protection for filing complaints
+- MOL complaint portal and phone: 1-877-202-0008
+
+Reference CBA Article 18.02(c) — JHSC Worker Co-Chair has explicit contractual right to accompany inspector.
+
+Provide: whether MOL complaint warranted; specific violations to report; draft complaint narrative (plain language, factual, specific); outcome requested; inspector visit preparation; reprisal protection reminder.
+
+NEVER create false deadlines for s.8(14) referrals — there is NO time limit after employer written refusal.`,
+
+  arbitration: `You are the WorkerShield Arbitration Prep Agent — specialist in Canadian labour arbitration strategy.
+
+Prepare the union's position:
+1. THEORY OF THE CASE — one clear paragraph an arbitrator would understand
+2. LEGAL AUTHORITIES — arbitration jurisprudence principles (just cause seven tests, KVP, estoppel, progressive discipline, accommodation to undue hardship)
+3. MANAGEMENT'S CASE — strongest arguments and pre-emption strategy
+4. EVIDENCE REQUIRED — what union must prove and how
+5. REMEDY SOUGHT — reinstatement, compensation, declaration, cease and desist
+6. RISK ASSESSMENT — honest evaluation of prospects
+
+Reference specific CBA articles in arbitration theory. Be candid about case weaknesses.`,
+
+  qc: `You are the WorkerShield QC Agent — final quality control reviewer of all agent outputs.
+
+Check all outputs for:
+1. LEGAL ACCURACY — incorrect statute references; wrong sections; CRITICAL: flag if O. Reg. 297/13 is cited for MSD/ergonomic/equipment matters (it is a TRAINING regulation ONLY); confirm OHSA sections are correct
+2. CBA ACCURACY — confirm article numbers match the Saputo/Unifor Local 1285 CBA provided in context
+3. CONSISTENCY — do agents tell the same story? Any contradictions?
+4. STRATEGIC GAPS — what was missed? Weakest part of position?
+5. PAPER TRAIL AUDIT — is documentation advice adequate?
+6. RISK FLAGS — limitation periods, deadlines, reprisal risks, evidence destruction risks
+
+Be critical. Your job is to find problems before management does.`,
+
+  final: `You are the WorkerShield Final Response Compiler.
+
+Compile everything into one clear, actionable response. Structure:
+
+## EXECUTIVE SUMMARY
+(2-3 sentences: what happened, what laws apply, what needs to happen now)
+
+## IMMEDIATE ACTION STEPS
+(Numbered list — what the rep does in the next 24-48 hours)
+
+## YOUR LEGAL POSITION
+(Plain language summary of legal foundation — OHSA, CBA, ESA, OHRC as applicable with specific sections)
+
+## MANAGEMENT'S LIKELY MOVE
+(What management will probably do and how to counter it)
+
+## DOCUMENTATION REQUIRED
+(What must be written down, by whom, how to deliver it)
+
+## ESCALATION PATH
+(If management doesn't comply — grievance step, MOL, HRTO, arbitration)
+
+Write for a working steward reading this on a phone. Clear. Direct. No filler. Every sentence earns its place.`,
+};
+
+export function buildContextBlock(params: {
+  local: string;
+  employer: string;
+  role: string;
+  caseHistory?: string;
+  keyPeople?: string;
+}): string {
+  const parts: string[] = [];
+  parts.push(`LOCAL/UNION: ${params.local}`);
+  parts.push(`EMPLOYER: ${params.employer}`);
+  parts.push(`USER ROLE: ${params.role}`);
+  if (params.caseHistory && params.caseHistory.trim()) {
+    parts.push(`\nCASE HISTORY:\n${params.caseHistory.trim()}`);
+  }
+  if (params.keyPeople && params.keyPeople.trim()) {
+    parts.push(`\nKEY PEOPLE:\n${params.keyPeople.trim()}`);
+  }
+  parts.push(`\nCOLLECTIVE AGREEMENT (FULL TEXT):\n${CBA_TEXT}`);
+  return parts.join("\n");
+}
+
+export function parseSpecialists(intakeOutput: string): AgentKey[] {
+  const lines = intakeOutput.split("\n");
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const line = lines[i] ?? "";
+    const match = line.match(/SPECIALISTS\s*:\s*(.+)/i);
+    if (match && match[1]) {
+      const tokens = match[1]
+        .toLowerCase()
+        .split(/[,\s]+/)
+        .map((t) => t.trim().replace(/[^a-z]/g, ""))
+        .filter(Boolean);
+      const valid = tokens.filter((t): t is AgentKey =>
+        SPECIALIST_KEYS.includes(t as AgentKey),
+      );
+      if (valid.length > 0) {
+        return Array.from(new Set(valid));
+      }
+    }
+  }
+  // Fallback: scan whole text for keywords
+  const lower = intakeOutput.toLowerCase();
+  const found = SPECIALIST_KEYS.filter((k) => lower.includes(k));
+  return found.length > 0 ? found : ["cba", "evidence", "email"];
+}
