@@ -26,15 +26,31 @@ interface Handlers {
   onComplete: () => void;
 }
 
+export interface PipelineController {
+  abort: () => void;
+}
+
 function getApiBase(): string {
   const domain = process.env.EXPO_PUBLIC_DOMAIN;
   if (domain) return `https://${domain}`;
   return "";
 }
 
-export async function runAgentPipeline(
+export function runAgentPipeline(
   args: RunArgs,
   handlers: Handlers,
+): PipelineController {
+  const controller = new AbortController();
+  void runInner(args, handlers, controller.signal);
+  return {
+    abort: () => controller.abort(),
+  };
+}
+
+async function runInner(
+  args: RunArgs,
+  handlers: Handlers,
+  signal: AbortSignal,
 ): Promise<void> {
   const base = getApiBase();
   const url = `${base}/api/agent/run`;
@@ -45,8 +61,13 @@ export async function runAgentPipeline(
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
       body: JSON.stringify(args),
-    })) as unknown as Response;
+      signal,
+    } as any)) as unknown as Response;
   } catch (e) {
+    if (signal.aborted) {
+      handlers.onComplete();
+      return;
+    }
     handlers.onError(e instanceof Error ? e.message : "Network error");
     return;
   }
@@ -91,6 +112,10 @@ export async function runAgentPipeline(
       }
     }
   } catch (e) {
+    if (signal.aborted) {
+      wrapped.onComplete();
+      return;
+    }
     wrapped.onError(e instanceof Error ? e.message : "Stream error");
     return;
   }

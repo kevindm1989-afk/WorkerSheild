@@ -15,19 +15,37 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { AgentChip } from "@/components/AgentChip";
 import { Markdown } from "@/components/Markdown";
-import { runAgentPipeline, type AgentState } from "@/lib/agentClient";
+import {
+  runAgentPipeline,
+  type AgentState,
+  type PipelineController,
+} from "@/lib/agentClient";
 import {
   isVoiceDictationAvailable,
   startVoiceDictation,
   type VoiceSession,
 } from "@/lib/voice";
 import { exportFinalAsPdf } from "@/lib/pdf";
+import { CopyButton } from "@/components/CopyButton";
+import {
+  Onboarding,
+  OnboardingLoader,
+  useOnboarding,
+} from "@/components/Onboarding";
 
 type Role = "Both Roles" | "Steward" | "JHSC";
 
 const ROLES: Role[] = ["Both Roles", "Steward", "JHSC"];
 
 export default function HomeScreen() {
+  const onboarding = useOnboarding();
+  if (onboarding.status === "loading") return <OnboardingLoader />;
+  if (onboarding.status === "needed")
+    return <Onboarding onDone={onboarding.markDone} />;
+  return <Main />;
+}
+
+function Main() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
 
@@ -51,7 +69,24 @@ export default function HomeScreen() {
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
 
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const pipelineRef = useRef<PipelineController | null>(null);
+  const runIdRef = useRef(0);
+  const finalArrivedRef = useRef(false);
+
   const scrollRef = useRef<ScrollView>(null);
+
+  useEffect(
+    () => () => {
+      pipelineRef.current?.abort();
+    },
+    [],
+  );
+
+  const toggleExpand = useCallback((key: string) => {
+    Haptics.selectionAsync().catch(() => {});
+    setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+  }, []);
 
   useEffect(
     () => () => {
@@ -141,21 +176,33 @@ export default function HomeScreen() {
     [],
   );
 
-  const handleRun = useCallback(async () => {
+  const handleRun = useCallback(() => {
     if (!problem.trim() || running) return;
     if (listening) stopVoice();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+
+    // Abort any prior in-flight pipeline before starting a new run.
+    pipelineRef.current?.abort();
+    pipelineRef.current = null;
+
+    // Bump runId so any late callbacks from a prior run are ignored.
+    const myRunId = ++runIdRef.current;
+    finalArrivedRef.current = false;
+
     setRunning(true);
     setExportError(null);
     setErrorMsg(null);
     setAgents([]);
     setFinalOut(null);
+    setExpanded({});
 
     setTimeout(() => {
       scrollRef.current?.scrollTo({ y: 9999, animated: true });
     }, 50);
 
-    await runAgentPipeline(
+    const isCurrent = () => runIdRef.current === myRunId;
+
+    pipelineRef.current = runAgentPipeline(
       {
         local,
         employer,
@@ -165,15 +212,29 @@ export default function HomeScreen() {
         problem,
       },
       {
-        onPending: (key, label) => updateAgent(key, label, { status: "pending" }),
+        onPending: (key, label) => {
+          if (!isCurrent()) return;
+          updateAgent(key, label, { status: "pending" });
+        },
         onRunning: (key, label) => {
+          if (!isCurrent()) return;
           updateAgent(key, label, { status: "running" });
           Haptics.selectionAsync().catch(() => {});
         },
         onDone: (key, label, output) => {
+          if (!isCurrent()) return;
           updateAgent(key, label, { status: "done", output });
+          if (key !== "final") {
+            // Auto-expand each specialist as it finishes (until final arrives).
+            setExpanded((prev) =>
+              prev[key] === undefined ? { ...prev, [key]: true } : prev,
+            );
+          }
           if (key === "final") {
+            finalArrivedRef.current = true;
             setFinalOut(output);
+            // Collapse all specialists once the final response is ready.
+            setExpanded({});
             Haptics.notificationAsync(
               Haptics.NotificationFeedbackType.Success,
             ).catch(() => {});
@@ -183,20 +244,26 @@ export default function HomeScreen() {
           }
         },
         onError: (message) => {
+          if (!isCurrent()) return;
           setErrorMsg(message);
           setRunning(false);
+          pipelineRef.current = null;
           Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Error,
           ).catch(() => {});
         },
         onComplete: () => {
+          if (!isCurrent()) return;
           setRunning(false);
+          pipelineRef.current = null;
         },
       },
     );
   }, [
     problem,
     running,
+    listening,
+    stopVoice,
     local,
     employer,
     role,
@@ -205,14 +272,33 @@ export default function HomeScreen() {
     updateAgent,
   ]);
 
+  const handleStop = useCallback(() => {
+    if (!running) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
+    // Bump runId so any in-flight callbacks from this run are ignored.
+    runIdRef.current += 1;
+    pipelineRef.current?.abort();
+    pipelineRef.current = null;
+    setRunning(false);
+    // Only show "stopped" if we never received a final response.
+    if (!finalArrivedRef.current) {
+      setErrorMsg("Pipeline stopped.");
+    }
+  }, [running]);
+
   const reset = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     if (listening) stopVoice();
+    runIdRef.current += 1;
+    finalArrivedRef.current = false;
+    pipelineRef.current?.abort();
+    pipelineRef.current = null;
     setProblem("");
     setAgents([]);
     setFinalOut(null);
     setErrorMsg(null);
     setExportError(null);
+    setExpanded({});
     setRunning(false);
     scrollRef.current?.scrollTo({ y: 0, animated: true });
   }, [listening, stopVoice]);
@@ -455,6 +541,23 @@ export default function HomeScreen() {
             </Text>
           )}
         </Pressable>
+
+        {running && (
+          <Pressable
+            onPress={handleStop}
+            style={({ pressed }) => [
+              styles.stopBtn,
+              {
+                backgroundColor: pressed ? "#7A1212" : "transparent",
+                borderColor: colors.danger,
+              },
+            ]}
+          >
+            <Text style={[styles.stopBtnText, { color: colors.danger }]}>
+              ■ STOP PIPELINE
+            </Text>
+          </Pressable>
+        )}
       </View>
 
       {/* AGENT STATUS */}
@@ -489,35 +592,60 @@ export default function HomeScreen() {
       )}
 
       {/* SPECIALIST OUTPUT CARDS */}
-      {specialistAgents.map((a) => (
-        <View key={a.key} style={styles.section}>
-          <View
-            style={[
-              styles.outputCard,
-              { borderColor: colors.border, backgroundColor: colors.card },
-            ]}
-          >
+      {specialistAgents.map((a) => {
+        const isOpen = expanded[a.key] ?? false;
+        return (
+          <View key={a.key} style={styles.section}>
             <View
               style={[
-                styles.outputHeader,
-                { borderBottomColor: colors.border },
+                styles.outputCard,
+                { borderColor: colors.border, backgroundColor: colors.card },
               ]}
             >
-              <Text style={[styles.outputTag, { color: colors.mutedForeground }]}>
-                AGENT
-              </Text>
-              <Text
-                style={[styles.outputTitle, { color: colors.foreground }]}
+              <Pressable
+                onPress={() => toggleExpand(a.key)}
+                style={({ pressed }) => [
+                  styles.outputHeader,
+                  {
+                    borderBottomColor: colors.border,
+                    borderBottomWidth: isOpen ? 1 : 0,
+                    backgroundColor: pressed ? colors.muted : "transparent",
+                  },
+                ]}
               >
-                {a.label.toUpperCase()}
-              </Text>
-            </View>
-            <View style={{ padding: 14 }}>
-              <Markdown source={a.output ?? ""} />
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={[
+                      styles.outputTag,
+                      { color: colors.mutedForeground },
+                    ]}
+                  >
+                    AGENT
+                  </Text>
+                  <Text
+                    style={[styles.outputTitle, { color: colors.foreground }]}
+                  >
+                    {a.label.toUpperCase()}
+                  </Text>
+                </View>
+                <Text
+                  style={[styles.chevron, { color: colors.primary }]}
+                >
+                  {isOpen ? "▾" : "▸"}
+                </Text>
+              </Pressable>
+              {isOpen && (
+                <View style={{ padding: 14 }}>
+                  <Markdown source={a.output ?? ""} />
+                  <View style={styles.cardActions}>
+                    <CopyButton text={a.output ?? ""} label="COPY OUTPUT" />
+                  </View>
+                </View>
+              )}
             </View>
           </View>
-        </View>
-      ))}
+        );
+      })}
 
       {/* FINAL CARD */}
       {finalOut && (
@@ -545,6 +673,9 @@ export default function HomeScreen() {
             </View>
             <View style={{ padding: 16 }}>
               <Markdown source={finalOut} />
+              <View style={[styles.cardActions, { gap: 8 }]}>
+                <CopyButton text={finalOut} label="COPY RESPONSE" size="md" />
+              </View>
             </View>
           </View>
 
@@ -785,6 +916,30 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Inter_800ExtraBold",
     letterSpacing: 2,
+  },
+  stopBtn: {
+    marginTop: 10,
+    paddingVertical: 12,
+    borderWidth: 1.5,
+    borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  stopBtnText: {
+    fontSize: 12,
+    fontFamily: "Inter_800ExtraBold",
+    letterSpacing: 1.6,
+  },
+  chevron: {
+    fontSize: 18,
+    fontFamily: "Inter_800ExtraBold",
+    paddingHorizontal: 4,
+  },
+  cardActions: {
+    marginTop: 12,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   sectionBar: { width: 3, height: 14 },
   sectionTitle: {
