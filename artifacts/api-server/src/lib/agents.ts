@@ -130,6 +130,161 @@ KEY STRATEGIC FACTS:
 - Prior MOL ergonomist visit by Kenneth Brown establishes facility awareness of MSD risk
 `;
 
+export const JURISPRUDENCE_DB = `
+VERIFIED CANADIAN ARBITRATION JURISPRUDENCE DATABASE
+WorkerShield agents must prioritize citing cases from this verified list.
+When a verified case covers the relevant principle, cite it by exact name.
+When no verified case covers the principle, agents may draw on general knowledge but must flag: "[VERIFY CITATION BEFORE USE]"
+
+========================================
+DISCIPLINE & JUST CAUSE
+========================================
+
+CASE: Wm. Scott & Company Ltd. v. Canadian Food and Allied Workers Union (1977) 1 CLRBR 1
+PRINCIPLE: The foundational three-question just cause test:
+(1) Has the employee given just and reasonable cause for some discipline?
+(2) If yes, is discharge an excessive response in all the circumstances?
+(3) If discharge is excessive, what lesser penalty is appropriate?
+APPLY WHEN: Any discipline or discharge grievance. This is the starting point for every just cause analysis in BC and widely adopted across Canada.
+
+CASE: Re Lumber & Sawmill Workers Union and KVP Company Ltd. (1965) 16 LAC 73
+PRINCIPLE: The KVP Test — for an employer rule to be enforceable under just cause, it must meet all of:
+(1) The rule must not be inconsistent with the collective agreement
+(2) The rule must not be unreasonable
+(3) The rule must be clear and unequivocal
+(4) The rule must be brought to the attention of the employee before the company attempts to act on it
+(5) The rule must be consistently enforced
+(6) The rule must have been in existence at the time of the breach, or the employee must have been notified
+APPLY WHEN: Management disciplines for violation of a workplace rule or policy. Union argues rule fails one or more KVP criteria.
+
+CASE: Re Edith Cavell Private Hospital and Hospital Employees Union (1982) 6 LAC (3d) 229
+PRINCIPLE: Progressive discipline must be genuinely progressive. Employer cannot skip steps without extraordinary circumstances. Prior discipline must be for similar conduct to be considered in current matter.
+APPLY WHEN: Management imposes severe discipline without prior warnings, or uses unrelated past discipline to justify current penalty.
+
+CASE: Re City of Vancouver and CUPE Local 15 (1973)
+PRINCIPLE: Culminating incident doctrine — a final incident of relatively minor nature can justify discharge if there is a long history of progressive discipline for similar conduct. However, the prior record must be for similar conduct.
+APPLY WHEN: Employer uses culminating incident to justify discharge.
+
+CASE: Re Toronto East General Hospital and Ontario Nurses Association (1989)
+PRINCIPLE: Discipline issued without proper investigation is not valid just cause. Employer must conduct a thorough, fair investigation before imposing discipline.
+APPLY WHEN: Management disciplines without conducting proper investigation first.
+
+========================================
+STEWARD & UNION RIGHTS
+========================================
+
+CASE: Re Lumber Workers Industrial Union and Winton Lumber (1958)
+PRINCIPLE: The Weingarten principle in Canada — employees have the right to union representation at any investigatory interview that could lead to discipline. Employer must inform employee of this right.
+APPLY WHEN: Management holds investigatory meeting without union steward present or without advising employee of right to representation. Note: CBA Article 5.02 codifies this right for Saputo/Unifor Local 1285.
+
+CASE: Re Canadian Broadcasting Corporation and NABET (1983)
+PRINCIPLE: Employer cannot use information obtained in an investigatory interview where union representation was denied to impose discipline.
+APPLY WHEN: Discipline follows an interview where steward was excluded or not offered.
+
+========================================
+JHSC & SAFETY RECOMMENDATIONS
+========================================
+
+CASE: Re Hamilton Health Sciences Corporation and ONA (2007)
+PRINCIPLE: Employer cannot refuse a JHSC safety recommendation without providing substantive technical justification. A blanket denial that "no hazard exists" without conducting proper assessment is insufficient.
+APPLY WHEN: Management refuses JHSC recommendation claiming no hazard without conducting or presenting technical assessment.
+
+CASE: Re Canadian National Railway and International Brotherhood of Electrical Workers
+PRINCIPLE: JHSC recommendations must be given serious consideration and substantive response. Employer has obligation to genuinely engage with the committee's findings, not simply dismiss them.
+APPLY WHEN: Management dismisses JHSC recommendation without genuine engagement.
+
+CASE: Re Ontario Hydro and Power Workers Union of Canada (1988)
+PRINCIPLE: The internal responsibility system under OHSA requires employers to actively identify and address hazards. Employer cannot wait for incidents to occur before acting on known risks.
+APPLY WHEN: Management argues no action required because no incident has occurred yet.
+
+CASE: Re Entropex Inc. and USW (2011)
+PRINCIPLE: Worker's reasonable belief in danger is sufficient to trigger the right to refuse under OHSA. Employer cannot discipline a worker for a good faith refusal even if hazard is ultimately not found.
+APPLY WHEN: Right to refuse situation or discipline following a right to refuse.
+
+========================================
+UNILATERAL CHANGES & MANAGEMENT RIGHTS
+========================================
+
+CASE: Re KVP Co. v. Lumber and Sawmill Workers (1965) — Secondary Application
+PRINCIPLE: Management rights are subject to the collective agreement. Employer cannot exercise management rights in a manner that violates the CBA or that is arbitrary, discriminatory, or in bad faith.
+APPLY WHEN: Management claims right to make unilateral changes under management rights clause.
+
+CASE: Re Canadian Cellulose Company and Pulp Workers (1973)
+PRINCIPLE: Employer cannot unilaterally change established past practices that have become an implied term of the collective agreement (estoppel principle).
+APPLY WHEN: Management changes a past practice or benefit not explicitly addressed in CBA.
+
+CASE: Re Metropolitan Toronto and CUPE Local 79 (1990)
+PRINCIPLE: Past practice that has been consistently applied over a significant period can be binding on the employer even without explicit CBA language.
+APPLY WHEN: Union relies on established past practice to argue employer is bound.
+
+========================================
+ACCOMMODATION & HUMAN RIGHTS
+========================================
+
+CASE: British Columbia (Public Service Employee Relations Commission) v. BCGSEU [Meiorin] (1999) 3 SCR 3
+PRINCIPLE: Three-step test for bona fide occupational requirement (BFOR):
+(1) The standard was adopted for a purpose rationally connected to job performance
+(2) The standard was adopted in good faith
+(3) The standard is reasonably necessary — employer cannot accommodate without undue hardship
+APPLY WHEN: Employer imposes standard that adversely affects employee based on protected ground.
+
+CASE: Central Okanagan School District No. 23 v. Renaud (1992) 2 SCR 970
+PRINCIPLE: The duty to accommodate is shared — employer, union, and employee all have obligations. Union cannot block reasonable accommodation. Employee must cooperate in finding accommodation.
+APPLY WHEN: Accommodation dispute involving all three parties.
+
+CASE: Re Hydro-Quebec v. Syndicat des employe-e-s de techniques professionnelles (2008) SCC 43
+PRINCIPLE: Employer's duty to accommodate does not require it to change working conditions in a fundamental way or to create a new position. But employer must explore all reasonable options before concluding undue hardship.
+APPLY WHEN: Employer claims undue hardship without demonstrating it genuinely explored all options.
+
+========================================
+OVERTIME & HOURS OF WORK
+========================================
+
+CASE: Re General Motors of Canada and CAW (1996)
+PRINCIPLE: Overtime equalization provisions in CBA must be applied consistently and in good faith. Employer cannot selectively offer overtime in a manner that undermines equalization obligations.
+APPLY WHEN: Grievance about unfair distribution of overtime. Reference CBA LOU #1 for Saputo/Unifor Local 1285.
+
+CASE: Re Falconbridge Nickel Mines and United Steelworkers (1970)
+PRINCIPLE: Scheduled hours guarantees are enforceable. When employer sends employee home early without just cause, employee is entitled to guaranteed hours pay.
+APPLY WHEN: Employee sent home early or denied guaranteed hours. Reference CBA Article 9.07 for Saputo/Unifor Local 1285.
+
+========================================
+SENIORITY & LAYOFF
+========================================
+
+CASE: Re Massey-Ferguson Industries and UAW (1969)
+PRINCIPLE: Seniority is a fundamental right under the collective agreement. Employer must apply seniority provisions strictly and cannot exercise discretion in a manner that undermines seniority rights.
+APPLY WHEN: Seniority rights dispute — layoff, recall, job posting, shift assignment.
+
+CASE: Re General Electric Canada and IUE (1988)
+PRINCIPLE: In job posting competitions, where the CBA requires selection of the most senior qualified applicant, the employer's assessment of "qualifications" must be objective and applied consistently.
+APPLY WHEN: Job posting grievance where senior employee passed over.
+
+========================================
+REPRISAL & UNION ACTIVITY
+========================================
+
+CASE: Re Royal Oak Mines and CAW (1996)
+PRINCIPLE: Employer cannot discipline or disadvantage employees for exercising statutory or contractual rights. Reprisal for union activity, safety complaints, or exercising rights under OHSA is prohibited.
+APPLY WHEN: Discipline or adverse treatment follows employee's exercise of union or safety rights.
+
+CASE: Re Westinghouse Canada and IBEW (1980)
+PRINCIPLE: Circumstantial evidence of reprisal is sufficient. Union does not need to prove employer's subjective intent — it is enough to show that discipline followed protected activity and the employer's stated reason is not credible.
+APPLY WHEN: Management claims discipline is unrelated to union/safety activity but timing is suspicious.
+
+========================================
+INVESTIGATION & PROCEDURAL FAIRNESS
+========================================
+
+CASE: Re Greater Toronto Airports Authority and PSAC (2007)
+PRINCIPLE: Employer's investigation must be thorough, timely, and unbiased. Decision-maker must not be the same person who conducted the investigation or who has a conflict of interest.
+APPLY WHEN: Flawed investigation process used to support discipline.
+
+CASE: Re Bell Canada and CEP (2001)
+PRINCIPLE: Employee must be given adequate opportunity to respond to allegations before discipline is imposed. Discipline imposed without meaningful opportunity to respond is procedurally defective.
+APPLY WHEN: Management imposes discipline without allowing employee to respond to allegations.
+`;
+
 export type AgentKey =
   | "intake"
   | "ohsa"
@@ -221,7 +376,10 @@ Analyze through the lens of:
 - KVP principle (unilateral rule changes)
 - Progressive discipline principles
 
-Provide: specific CBA articles violated; recommended grievance language; grievance strength (Strong/Moderate/Weak) with reasoning; management's likely position and counter-strategy; recommended grievance step; evidence required.`,
+Provide: specific CBA articles violated; recommended grievance language; grievance strength (Strong/Moderate/Weak) with reasoning; management's likely position and counter-strategy; recommended grievance step; evidence required.
+
+JURISPRUDENCE INSTRUCTION:
+When citing arbitration cases or legal principles, use the VERIFIED JURISPRUDENCE DATABASE provided in context as your primary source. When a verified case covers the relevant principle, cite it by its exact name as listed. When no verified case in the database covers a specific principle you need to cite, you may draw on your broader knowledge but you MUST flag it with: [VERIFY CITATION BEFORE USE]. Never present an unverified citation as confirmed fact. The QC agent will check all citations against the database.`,
 
   esa: `You are an Ontario employment lawyer with 15 years experience representing unionized workers. You are the WorkerShield ESA Agent — expert in Ontario's Employment Standards Act, 2000.
 
@@ -304,7 +462,10 @@ Prepare the union's position:
 5. REMEDY SOUGHT — reinstatement, compensation, declaration, cease and desist
 6. RISK ASSESSMENT — honest evaluation of prospects
 
-Reference specific CBA articles in arbitration theory. Be candid about case weaknesses.`,
+Reference specific CBA articles in arbitration theory. Be candid about case weaknesses.
+
+JURISPRUDENCE INSTRUCTION:
+When citing arbitration cases or legal principles, use the VERIFIED JURISPRUDENCE DATABASE provided in context as your primary source. When a verified case covers the relevant principle, cite it by its exact name as listed. When no verified case in the database covers a specific principle you need to cite, you may draw on your broader knowledge but you MUST flag it with: [VERIFY CITATION BEFORE USE]. Never present an unverified citation as confirmed fact. The QC agent will check all citations against the database.`,
 
   qc: `You are a senior union legal counsel conducting final review of all case work before it goes to the rep. You are the WorkerShield QC Agent — ruthless in finding errors.
 
@@ -341,7 +502,17 @@ Check all outputs for:
 - Reprisal risks
 - Evidence destruction risks
 
-Be critical. Your job is to find problems before management does.`,
+Be critical. Your job is to find problems before management does.
+
+CITATION VERIFICATION DUTY:
+Review all citations made by CBA and Arbitration agents. Cross-reference every case citation against the VERIFIED JURISPRUDENCE DATABASE in context.
+- If a cited case appears in the database: mark as VERIFIED
+- If a cited case is NOT in the database but is flagged [VERIFY CITATION BEFORE USE]: note it requires verification before use in formal proceedings
+- If a cited case is NOT in the database and was NOT flagged: mark as UNVERIFIED — flag as potential hallucination, do not use without independent confirmation
+Report all citation findings clearly in your QC output.
+
+JURISPRUDENCE INSTRUCTION:
+When citing arbitration cases or legal principles, use the VERIFIED JURISPRUDENCE DATABASE provided in context as your primary source. When a verified case covers the relevant principle, cite it by its exact name as listed. When no verified case in the database covers a specific principle you need to cite, you may draw on your broader knowledge but you MUST flag it with: [VERIFY CITATION BEFORE USE]. Never present an unverified citation as confirmed fact.`,
 
   final: `You are the WorkerShield Final Response Compiler — the senior strategist who takes all agent work and produces the definitive answer.
 

@@ -4,11 +4,14 @@ import Anthropic from "@anthropic-ai/sdk";
 import {
   AGENT_LABELS,
   AGENT_PROMPTS,
+  JURISPRUDENCE_DB,
   SPECIALIST_KEYS,
   buildContextBlock,
   parseSpecialists,
   type AgentKey,
 } from "../lib/agents";
+
+const JURISPRUDENCE_AGENTS = new Set<AgentKey>(["arbitration", "cba", "qc"]);
 
 const router: IRouter = Router();
 
@@ -41,13 +44,16 @@ async function callAgent(
   signal: AbortSignal,
 ): Promise<string> {
   const system = `${AGENT_PROMPTS[agentKey]}\n\n--- WORKPLACE CONTEXT ---\n${contextBlock}`;
+  const finalPayload = JURISPRUDENCE_AGENTS.has(agentKey)
+    ? `${userPayload}\n\nVERIFIED JURISPRUDENCE DATABASE:\n${JURISPRUDENCE_DB}`
+    : userPayload;
   const message = await client.messages.create(
     {
       model: MODEL,
       max_tokens: MAX_TOKENS,
       temperature: TEMPERATURE,
       system,
-      messages: [{ role: "user", content: userPayload }],
+      messages: [{ role: "user", content: finalPayload }],
     },
     { signal },
   );
