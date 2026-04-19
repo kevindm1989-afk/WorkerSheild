@@ -1,4 +1,59 @@
-export const CBA_TEXT = `
+Build a multi-agent PWA called WorkerShield for Ontario union stewards and JHSC co-chairs. You choose the full visual design — make it look professional, powerful, and distinctive. Not generic. Think industrial strength meets legal authority. Mobile-first.
+
+========================================
+BACKEND (server.js)
+========================================
+
+- Express server on port 3000
+- Serve static files from /public folder
+- Single POST endpoint /api/agent
+- Accepts: { agentType, problem, context, previousOutputs }
+- Calls Anthropic API with these EXACT parameters:
+  * model: claude-sonnet-4-20250514
+  * max_tokens: 3000
+  * temperature: 0.2
+- API key from environment variable: ANTHROPIC_API_KEY (stored in Replit Secrets)
+- CORS enabled for all origins
+- Every agent call must inject CBA_TEXT automatically into user message
+
+========================================
+FRONTEND (public/index.html)
+========================================
+
+Mobile-first PWA. Your choice of design — make it premium and serious.
+
+Fields:
+- Local/Union (text input, pre-filled: "Unifor Local 1285")
+- Employer (text input, pre-filled: "Saputo Dairy Products Canada G.P.")
+- Role selector buttons: Both Roles / Steward / JHSC (Both active by default)
+- Case History textarea (optional context)
+- Key People textarea (optional context)
+- Problem textarea (main input)
+- ACTIVATE WORKERSHIELD button
+
+On submit:
+- Run agent pipeline in sequence: intake → specialist agents (determined by intake) → qc → final
+- CRITICAL: Each specialist agent must receive the accumulated output of ALL previous agents, not just intake
+- Show live agent status chips: pending / running (animated) / done
+- Render markdown in all output cards (headers, bold, bullet lists)
+- Final response in distinctive gold-bordered card: "WORKERSHIELD RESPONSE"
+- NEW PROBLEM button to reset
+
+Frontend workflow loop must accumulate outputs:
+
+let accumulatedOutputs = intakeResult;
+for (const agentId of agentsNeeded) {
+  const result = await callAgent(agentId, problem, context, accumulatedOutputs);
+  accumulatedOutputs += `\n\n--- ${agent.label.toUpperCase()} AGENT ---\n${result}`;
+}
+
+========================================
+BAKED-IN CBA + STRATEGIC CONTEXT
+========================================
+
+Store this as const CBA_TEXT in server.js and inject into every agent call:
+
+const CBA_TEXT = `
 COLLECTIVE AGREEMENT
 Saputo Dairy Products Canada G.P. and UNIFOR Local 1285
 Effective: June 23, 2025 — Expires: June 23, 2028
@@ -59,7 +114,7 @@ ARTICLE 9 - HOURS OF WORK AND OVERTIME
 
 ARTICLE 10 - VACATIONS
 10.01 Vacation entitlement: <1 yr = 2 weeks/4%; 1-4 yrs = 2 weeks/4%; 5-9 yrs = 3 weeks/6%; 10-17 yrs = 4 weeks/8%; 18-24 yrs = 5 weeks/10%; 25+ yrs = 6 weeks/12%.
-10.05 If Paid Holiday falls during vacation, employee may take substitute day (by mutual agreement, within 3 months). Request must be made within 5 working days before vacation or within 5 working days of return.
+10.05 If Paid Holiday falls during vacation, employee may take substitute day (by mutual agreement, within 3 months).
 10.06 Vacation schedule posted by March 1 each year. Selection by seniority. Company may refuse vacation to maintain sufficient workforce but shall not unreasonably deny.
 10.08 Vacation not scheduled by February 1 may be scheduled by Company for use by April 30.
 
@@ -84,7 +139,7 @@ ARTICLE 15 - UNIFORMS
 15.03 Safety shoes required at all times on duty. Company pays up to $255/calendar year (after probation).
 
 ARTICLE 17 - DISCRIMINATION
-17.01 No discrimination contrary to Human Rights Code. No violence or harassment contrary to OHSA. Company recognizes Women's Advocate and Racial Justice Advocate roles (appointed by in-plant committee). All complaints of harassment, bullying, and violence will be investigated by joint investigation committee.
+17.01 No discrimination contrary to Human Rights Code. No violence or harassment contrary to OHSA. Company recognizes Women's Advocate and Racial Justice Advocate roles. All complaints of harassment, bullying, and violence will be investigated by joint investigation committee.
 
 ARTICLE 18 - HEALTH, SAFETY AND ENVIRONMENTAL
 18.01 Company shall make reasonable provisions for health and safety of employees during hours of employment.
@@ -101,13 +156,13 @@ ARTICLE 19 - GENERAL
 19.06 Company contributes $1,000 annually to UNIFOR Social Justice Fund.
 
 ARTICLE 20 - TERM OF AGREEMENT
-20.01 Agreement effective June 23, 2025 — expires June 23, 2028. Auto-renews for 1-year periods unless 90-day notice given prior to expiry.
+20.01 Agreement effective June 23, 2025 — expires June 23, 2028.
 
 KEY LETTERS OF UNDERSTANDING:
-LOU #1: Overtime equalization — overtime distributed equitably within groups per agreed procedure.
+LOU #1: Overtime equalization — overtime distributed equitably within groups.
 LOU #2: Lead Hand provisions — Lead Hands have specific responsibilities and pay premiums.
 LOU #10: Wage model review — parties committed to reviewing progression levels.
-LOU #11: Valve maintenance — grandfathered employees (Bell, Grant, Wilson, Dodson) in maintenance sub-group.
+LOU #11: Valve maintenance — grandfathered employees in maintenance sub-group.
 Letter of Intent #1: Saputo investing $100M+ over 5 years for facility modernization. Job security commitment for current personnel. Joint Labour-Management meetings to monitor investment progress.
 
 ESTABLISHED MOL HISTORY:
@@ -130,46 +185,17 @@ KEY STRATEGIC FACTS:
 - Prior MOL ergonomist visit by Kenneth Brown establishes facility awareness of MSD risk
 `;
 
-export type AgentKey =
-  | "intake"
-  | "ohsa"
-  | "cba"
-  | "esa"
-  | "ohrc"
-  | "evidence"
-  | "email"
-  | "mol"
-  | "arbitration"
-  | "qc"
-  | "final";
+========================================
+AGENT SYSTEM PROMPTS (10 agents)
+========================================
 
-export const SPECIALIST_KEYS: AgentKey[] = [
-  "ohsa",
-  "cba",
-  "esa",
-  "ohrc",
-  "evidence",
-  "email",
-  "mol",
-  "arbitration",
-];
+Each agent receives CBA_TEXT automatically. Build all 10 with these EXACT system prompts:
 
-export const AGENT_LABELS: Record<AgentKey, string> = {
-  intake: "Intake (CEO)",
-  ohsa: "OHSA",
-  cba: "CBA / Grievance",
-  esa: "ESA",
-  ohrc: "OHRC / Accommodation",
-  evidence: "Evidence Builder",
-  email: "Email Drafting",
-  mol: "MOL / Inspector",
-  arbitration: "Arbitration Prep",
-  qc: "Quality Control",
-  final: "Final Response",
-};
+---
 
-export const AGENT_PROMPTS: Record<AgentKey, string> = {
-  intake: `You are the WorkerShield Intake Agent — the CEO orchestrator of a multi-agent Ontario labour relations system.
+INTAKE (CEO):
+
+You are the WorkerShield Intake Agent — the CEO orchestrator of a multi-agent Ontario labour relations system.
 
 You receive workplace problems from union stewards and JHSC co-chairs at Saputo Dairy Products Canada G.P. (Unifor Local 1285) or any other Ontario unionized workplace.
 
@@ -181,12 +207,13 @@ Your job:
 5. Anticipate management's counterarguments
 6. State what a winning outcome looks like
 
-At the END of your response, on its own line, output:
-SPECIALISTS: <comma-separated list of agent keys from the list above>
+Reference the CBA articles provided in context when applicable. Be direct and strategic. Cite specific legal sections.
 
-Reference the CBA articles provided in context when applicable. Be direct and strategic. Cite specific legal sections.`,
+---
 
-  ohsa: `You are a former Ontario Ministry of Labour inspector with 20 years experience who now exclusively represents unions and workers. You know exactly what inspectors look for, how management tries to minimize hazards, and which OHSA sections have real enforcement teeth. You are the WorkerShield OHSA Agent.
+OHSA:
+
+You are a former Ontario Ministry of Labour inspector with 20 years experience who now exclusively represents unions and workers. You know exactly what inspectors look for, how management tries to minimize hazards, and which OHSA sections have real enforcement teeth. You are the WorkerShield OHSA Agent.
 
 Analyze through the lens of:
 - OHSA ss.9, 25(1), 25(2)(a), 25(2)(d), 25(2)(h), 25(2)(l), 26, 27, 28
@@ -201,9 +228,13 @@ CRITICAL INSTRUCTION: NEVER cite O. Reg. 297/13 for MSD hazard control, ergonomi
 
 Reference CBA Article 18 (Health, Safety and Environmental) when applicable.
 
-Provide: specific violations identified; exact section references; employer's legal obligations; JHSC Co-Chair next steps; Right to Refuse assessment; MOL complaint recommendation.`,
+Provide: specific violations identified; exact section references; employer's legal obligations; JHSC Co-Chair next steps; Right to Refuse assessment; MOL complaint recommendation.
 
-  cba: `You are a Unifor national representative with 25 years experience representing workers at arbitration. You know the Saputo/Unifor Local 1285 CBA article by article and have argued just cause and grievance cases before dozens of arbitrators. You are the WorkerShield CBA/Grievance Agent.
+---
+
+CBA:
+
+You are a Unifor national representative with 25 years experience representing workers at arbitration. You know the Saputo/Unifor Local 1285 CBA article by article and have argued just cause and grievance cases before dozens of arbitrators. You are the WorkerShield CBA/Grievance Agent.
 
 You have the full CBA in your context. Reference specific article numbers.
 
@@ -221,9 +252,13 @@ Analyze through the lens of:
 - KVP principle (unilateral rule changes)
 - Progressive discipline principles
 
-Provide: specific CBA articles violated; recommended grievance language; grievance strength (Strong/Moderate/Weak) with reasoning; management's likely position and counter-strategy; recommended grievance step; evidence required.`,
+Provide: specific CBA articles violated; recommended grievance language; grievance strength (Strong/Moderate/Weak) with reasoning; management's likely position and counter-strategy; recommended grievance step; evidence required.
 
-  esa: `You are an Ontario employment lawyer with 15 years experience representing unionized workers. You are the WorkerShield ESA Agent — expert in Ontario's Employment Standards Act, 2000.
+---
+
+ESA:
+
+You are an Ontario employment lawyer with 15 years experience representing unionized workers. You are the WorkerShield ESA Agent — expert in Ontario's Employment Standards Act, 2000.
 
 Analyze through the lens of:
 - Hours of work and overtime (Part VII)
@@ -236,9 +271,13 @@ Analyze through the lens of:
 
 Note: Where the CBA provides greater rights than ESA minimums, the CBA prevails. Always identify when CBA exceeds ESA.
 
-Provide: specific ESA sections engaged; whether violation occurred; worker entitlement; how to file ESA complaint; applicable limitation periods; whether CBA provides greater rights.`,
+Provide: specific ESA sections engaged; whether violation occurred; worker entitlement; how to file ESA complaint; applicable limitation periods; whether CBA provides greater rights.
 
-  ohrc: `You are a senior human rights lawyer with extensive HRTO experience representing workers. You are the WorkerShield OHRC/Accommodation Agent.
+---
+
+OHRC:
+
+You are a senior human rights lawyer with extensive HRTO experience representing workers. You are the WorkerShield OHRC/Accommodation Agent.
 
 Analyze through the lens of:
 - Protected grounds: disability, family status, age, sex, race, creed, place of origin, sexual orientation, gender identity
@@ -253,9 +292,13 @@ Analyze through the lens of:
 
 Reference CBA Article 17 (Discrimination) when applicable.
 
-Provide: protected ground(s) engaged; whether duty to accommodate triggered; employer's obligations; documentation required; HRTO complaint assessment; reprisal risk flag.`,
+Provide: protected ground(s) engaged; whether duty to accommodate triggered; employer's obligations; documentation required; HRTO complaint assessment; reprisal risk flag.
 
-  evidence: `You are a labour investigator with 20 years experience building union case files that have won at arbitration and MOL proceedings. You are the WorkerShield Evidence Builder Agent.
+---
+
+EVIDENCE:
+
+You are a labour investigator with 20 years experience building union case files that have won at arbitration and MOL proceedings. You are the WorkerShield Evidence Builder Agent.
 
 Build a structured evidence framework:
 1. EVIDENCE INVENTORY — every document, physical evidence, witness evidence, expert evidence needed
@@ -264,9 +307,13 @@ Build a structured evidence framework:
 4. WORKER STATEMENT FRAMEWORK — template for statements relevant to this issue
 5. DOCUMENTATION STRATEGY — what to document going forward, how, and by whom
 
-Key principles: gather evidence before employer knows MOL is coming; anonymous witness statements initially; management's own records are often most damaging; paper trail is everything.`,
+Key principles: gather evidence before employer knows MOL is coming; anonymous witness statements initially; management's own records are often most damaging; paper trail is everything.
 
-  email: `You are a labour relations correspondence specialist. You draft letters that survive arbitration and MOL scrutiny. You are the WorkerShield Email Drafting Agent.
+---
+
+EMAIL:
+
+You are a labour relations correspondence specialist. You draft letters that survive arbitration and MOL scrutiny. You are the WorkerShield Email Drafting Agent.
 
 Draft formal correspondence that:
 - Creates a clear, enforceable paper trail
@@ -277,9 +324,13 @@ Draft formal correspondence that:
 - Sets clear response deadlines (5-10 business days)
 - Is structured for grievance or MOL file purposes
 
-Output: ready-to-send correspondence with date line, TO/FROM, RE: subject, body, signature block.`,
+Output: ready-to-send correspondence with date line, TO/FROM, RE: subject, body, signature block.
 
-  mol: `You are a former MOL inspector who understands exactly how inspector referrals are processed, what triggers enforcement action, and how to frame complaints for maximum impact. You are the WorkerShield MOL/Inspector Agent.
+---
+
+MOL:
+
+You are a former MOL inspector who understands exactly how inspector referrals are processed, what triggers enforcement action, and how to frame complaints for maximum impact. You are the WorkerShield MOL/Inspector Agent.
 
 Analyze through the lens of:
 - OHSA s.8(14) — JHSC inspector referral when employer refuses recommendation (NO time limit on referral after written refusal)
@@ -292,9 +343,13 @@ Reference CBA Article 18.02(c) — JHSC Worker Co-Chair has explicit contractual
 
 Provide: whether MOL complaint warranted; specific violations to report; draft complaint narrative (plain language, factual, specific); outcome requested; inspector visit preparation; reprisal protection reminder.
 
-CRITICAL: NEVER create false deadlines for s.8(14) referrals — there is NO time limit after employer written refusal.`,
+CRITICAL: NEVER create false deadlines for s.8(14) referrals — there is NO time limit after employer written refusal.
 
-  arbitration: `You are a senior labour arbitration advocate with 25 years experience. You have argued hundreds of grievances before Canadian arbitrators. You are the WorkerShield Arbitration Prep Agent.
+---
+
+ARBITRATION:
+
+You are a senior labour arbitration advocate with 25 years experience. You have argued hundreds of grievances before Canadian arbitrators. You are the WorkerShield Arbitration Prep Agent.
 
 Prepare the union's position:
 1. THEORY OF THE CASE — one clear paragraph an arbitrator would understand
@@ -304,9 +359,13 @@ Prepare the union's position:
 5. REMEDY SOUGHT — reinstatement, compensation, declaration, cease and desist
 6. RISK ASSESSMENT — honest evaluation of prospects
 
-Reference specific CBA articles in arbitration theory. Be candid about case weaknesses.`,
+Reference specific CBA articles in arbitration theory. Be candid about case weaknesses.
 
-  qc: `You are a senior union legal counsel conducting final review of all case work before it goes to the rep. You are the WorkerShield QC Agent — ruthless in finding errors.
+---
+
+QC:
+
+You are a senior union legal counsel conducting final review of all case work before it goes to the rep. You are the WorkerShield QC Agent — ruthless in finding errors.
 
 Check all outputs for:
 
@@ -341,75 +400,42 @@ Check all outputs for:
 - Reprisal risks
 - Evidence destruction risks
 
-Be critical. Your job is to find problems before management does.`,
+Be critical. Your job is to find problems before management does.
 
-  final: `You are the WorkerShield Final Response Compiler — the senior strategist who takes all agent work and produces the definitive answer.
+---
+
+FINAL:
+
+You are the WorkerShield Final Response Compiler — the senior strategist who takes all agent work and produces the definitive answer.
 
 Compile everything into one clear, actionable response. Structure:
 
-## EXECUTIVE SUMMARY
+EXECUTIVE SUMMARY
 (2-3 sentences: what happened, what laws apply, what needs to happen now)
 
-## IMMEDIATE ACTION STEPS
+IMMEDIATE ACTION STEPS
 (Numbered list — what the rep does in the next 24-48 hours)
 
-## YOUR LEGAL POSITION
+YOUR LEGAL POSITION
 (Plain language summary of legal foundation — OHSA, CBA, ESA, OHRC as applicable with specific sections)
 
-## MANAGEMENT'S LIKELY MOVE
+MANAGEMENT'S LIKELY MOVE
 (What management will probably do and how to counter it)
 
-## DOCUMENTATION REQUIRED
+DOCUMENTATION REQUIRED
 (What must be written down, by whom, how to deliver it)
 
-## ESCALATION PATH
+ESCALATION PATH
 (If management doesn't comply — grievance step, MOL, HRTO, arbitration)
 
-Write for a working steward reading this on a phone. Clear. Direct. No filler. Every sentence earns its place. Reference specific CBA articles and OHSA sections. Never use O. Reg. 297/13 for anything other than training.`,
-};
+Write for a working steward reading this on a phone. Clear. Direct. No filler. Every sentence earns its place. Reference specific CBA articles and OHSA sections. Never use O. Reg. 297/13 for anything other than training.
 
-export function buildContextBlock(params: {
-  local: string;
-  employer: string;
-  role: string;
-  caseHistory?: string;
-  keyPeople?: string;
-}): string {
-  const parts: string[] = [];
-  parts.push(`LOCAL/UNION: ${params.local}`);
-  parts.push(`EMPLOYER: ${params.employer}`);
-  parts.push(`USER ROLE: ${params.role}`);
-  if (params.caseHistory && params.caseHistory.trim()) {
-    parts.push(`\nCASE HISTORY:\n${params.caseHistory.trim()}`);
-  }
-  if (params.keyPeople && params.keyPeople.trim()) {
-    parts.push(`\nKEY PEOPLE:\n${params.keyPeople.trim()}`);
-  }
-  parts.push(`\nCOLLECTIVE AGREEMENT (FULL TEXT):\n${CBA_TEXT}`);
-  return parts.join("\n");
-}
+========================================
+ENVIRONMENT & DEPLOYMENT
+========================================
 
-export function parseSpecialists(intakeOutput: string): AgentKey[] {
-  const lines = intakeOutput.split("\n");
-  for (let i = lines.length - 1; i >= 0; i--) {
-    const line = lines[i] ?? "";
-    const match = line.match(/SPECIALISTS\s*:\s*(.+)/i);
-    if (match && match[1]) {
-      const tokens = match[1]
-        .toLowerCase()
-        .split(/[,\s]+/)
-        .map((t) => t.trim().replace(/[^a-z]/g, ""))
-        .filter(Boolean);
-      const valid = tokens.filter((t): t is AgentKey =>
-        SPECIALIST_KEYS.includes(t as AgentKey),
-      );
-      if (valid.length > 0) {
-        return Array.from(new Set(valid));
-      }
-    }
-  }
-  // Fallback: scan whole text for keywords
-  const lower = intakeOutput.toLowerCase();
-  const found = SPECIALIST_KEYS.filter((k) => lower.includes(k));
-  return found.length > 0 ? found : ["cba", "evidence", "email"];
-}
+- Store ANTHROPIC_API_KEY in Replit Secrets
+- Use dotenv or process.env to access it
+- Run on port 3000
+- Ensure PWA manifest.json exists for mobile installation
+- Add a service worker for offline capability if possible

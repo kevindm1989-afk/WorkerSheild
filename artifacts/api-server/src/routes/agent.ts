@@ -12,8 +12,9 @@ import {
 
 const router: IRouter = Router();
 
-const MODEL = "claude-sonnet-4-5";
-const MAX_TOKENS = 1500;
+const MODEL = "claude-sonnet-4-20250514";
+const MAX_TOKENS = 3000;
+const TEMPERATURE = 0.2;
 
 function getClient(): Anthropic {
   const apiKey = process.env["ANTHROPIC_API_KEY"];
@@ -44,6 +45,7 @@ async function callAgent(
     {
       model: MODEL,
       max_tokens: MAX_TOKENS,
+      temperature: TEMPERATURE,
       system,
       messages: [{ role: "user", content: userPayload }],
     },
