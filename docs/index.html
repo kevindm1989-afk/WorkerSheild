@@ -411,6 +411,32 @@
       gap: 6px;
       flex-wrap: wrap;
     }
+    .field-section-label {
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      border-top: 1px solid var(--border);
+      margin: 14px 0 10px;
+      padding-top: 14px;
+    }
+    .field-row {
+      display: flex;
+      gap: 12px;
+    }
+    .field-row .field {
+      flex: 1;
+      min-width: 0;
+    }
+    .char-count {
+      float: right;
+      color: var(--text-dim);
+      font-weight: 400;
+      font-size: 11px;
+    }
+    .char-count.near-limit {
+      color: var(--amber);
+    }
     .pill {
       padding: 7px 14px;
       border: 1.5px solid var(--border);
@@ -1055,6 +1081,50 @@
             <button class="pill" data-role="JHSC">JHSC Co-Chair</button>
           </div>
         </div>
+
+        <div class="field-section-label">MEMBER PROFILE</div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Member Job Title / Role</label>
+            <input type="text" id="f-member-role" placeholder="e.g. Packager, Forklift Operator">
+          </div>
+          <div class="field">
+            <label>Seniority Date</label>
+            <input type="date" id="f-seniority-date">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Incident Date</label>
+            <input type="date" id="f-incident-date">
+          </div>
+          <div class="field">
+            <label>Management Person Involved</label>
+            <input type="text" id="f-mgmt-person" placeholder="Name and title">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Incident Type</label>
+          <select id="f-incident-type">
+            <option value="">— Select type —</option>
+            <option>Safety</option>
+            <option>Grievance</option>
+            <option>Discipline</option>
+            <option>Accommodation</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Brief Description <span class="char-count" id="f-brief-count">0 / 300</span></label>
+          <textarea id="f-brief-desc" maxlength="300" style="min-height:70px" placeholder="One or two sentences summarizing the core issue…"></textarea>
+        </div>
+
+        <div class="field-section-label">PROBLEM DETAILS</div>
+
         <div class="field">
           <label>Describe the Problem *</label>
           <textarea id="f-problem" style="min-height:120px" placeholder="What happened? Be specific — dates, names, what was said or done, what management did. The more detail, the stronger the analysis."></textarea>
@@ -1617,6 +1687,14 @@ document.getElementById('role-pills').addEventListener('click', e => {
   if (!btn) return;
   selectedRole = btn.dataset.role;
   document.querySelectorAll('#role-pills .pill').forEach(p => p.classList.toggle('active', p === btn));
+});
+
+// ── BRIEF DESCRIPTION CHAR COUNTER ────────────────────────────────────────────
+document.getElementById('f-brief-desc').addEventListener('input', function () {
+  const count = this.value.length;
+  const el = document.getElementById('f-brief-count');
+  el.textContent = `${count} / 300`;
+  el.classList.toggle('near-limit', count >= 250);
 });
 
 // ── INCIDENT MGMT PILLS ───────────────────────────────────────────────────────
@@ -2250,7 +2328,13 @@ async function runPipeline() {
     employer: document.getElementById('f-employer').value.trim(),
     role: selectedRole,
     caseHistory: document.getElementById('f-history').value.trim(),
-    keyPeople: document.getElementById('f-people').value.trim()
+    keyPeople: document.getElementById('f-people').value.trim(),
+    memberRole: document.getElementById('f-member-role').value.trim(),
+    seniorityDate: document.getElementById('f-seniority-date').value,
+    incidentDate: document.getElementById('f-incident-date').value,
+    mgmtPerson: document.getElementById('f-mgmt-person').value.trim(),
+    incidentType: document.getElementById('f-incident-type').value,
+    briefDesc: document.getElementById('f-brief-desc').value.trim()
   };
 
   // Show pipeline UI
