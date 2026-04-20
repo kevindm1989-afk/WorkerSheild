@@ -2474,14 +2474,14 @@ setTimeout(checkDeadlines, 1000);
 // ── Confidentiality Splash ───────────────────────────────────────────────────
 (function initSplash(){
   try {
-    if (!localStorage.getItem('ws_accepted')) {
+    if (!localStorage.getItem('ws_accepted_v2')) {
       const el = document.getElementById('ws-splash');
       if (el) el.style.display = 'flex';
     }
   } catch(e) {}
   const btn = document.getElementById('ws-splash-btn');
   if (btn) btn.addEventListener('click', () => {
-    try { localStorage.setItem('ws_accepted', new Date().toISOString()); } catch(e) {}
+    try { localStorage.setItem('ws_accepted_v2', new Date().toISOString()); } catch(e) {}
     const el = document.getElementById('ws-splash');
     if (el) el.style.display = 'none';
   });
