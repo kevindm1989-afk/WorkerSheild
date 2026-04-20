@@ -916,6 +916,113 @@
       font-size: 12px; line-height: 1.5;
     }
     .rtr-reprisal-banner strong { color: #f87171; }
+    /* ── TRIGGER DETECTION BANNER ── */
+    .trigger-banner {
+      background: rgba(212,160,23,0.07);
+      border: 1px solid var(--gold-dim);
+      border-left: 3px solid var(--gold);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+    .trigger-banner-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .trigger-banner-desc {
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    /* ── WORKFLOW MODALS ── */
+    .ws-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      z-index: 300;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      padding: 20px 0 80px;
+    }
+    .ws-modal-overlay.show { display: flex; }
+    .ws-modal-box {
+      background: var(--navy2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 92%;
+      max-width: 480px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+    .ws-modal-header {
+      background: var(--navy);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ws-modal-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--gold);
+    }
+    .ws-modal-close {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+    }
+    .ws-modal-body { padding: 18px; }
+    .ws-modal-hint { font-size: 12px; color: var(--text-dim); margin-bottom: 14px; line-height: 1.5; }
+    .checklist-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--gold);
+      margin: 16px 0 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .checklist-section-label:first-child { margin-top: 0; }
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .checklist-item:last-child { border-bottom: none; }
+    .checklist-item input[type="checkbox"] {
+      margin-top: 3px;
+      accent-color: var(--gold);
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .checklist-item label {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.4;
+      cursor: pointer;
+    }
+    .checklist-item label span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
 
     /* ── Deadline Calculator ── */
     .dl-result {
@@ -1129,6 +1236,16 @@
           <label>Describe the Problem *</label>
           <textarea id="f-problem" style="min-height:120px" placeholder="What happened? Be specific — dates, names, what was said or done, what management did. The more detail, the stronger the analysis."></textarea>
         </div>
+        <!-- Trigger phrase detection banner -->
+        <div id="trigger-banner" class="trigger-banner" style="display:none">
+          <div class="trigger-banner-label">⚡ SHORTCUT DETECTED</div>
+          <div class="trigger-banner-desc" id="trigger-banner-desc"></div>
+          <div style="display:flex;gap:8px">
+            <button id="trigger-open-btn" class="btn btn-sm btn-primary">OPEN</button>
+            <button id="trigger-dismiss-btn" class="btn btn-sm btn-outline">DISMISS</button>
+          </div>
+        </div>
+
         <button class="btn btn-primary" id="run-btn" style="margin-bottom:16px">
           ⚡ ACTIVATE WORKERSHIELD
         </button>
@@ -1451,6 +1568,75 @@
 
 <!-- Toast -->
 <div id="toast"></div>
+
+<!-- DTA Checklist Modal -->
+<div id="modal-dta" class="ws-modal-overlay">
+  <div class="ws-modal-box">
+    <div class="ws-modal-header">
+      <span class="ws-modal-title">DUTY TO ACCOMMODATE — CHECKLIST</span>
+      <button class="ws-modal-close" onclick="closeWsModal('modal-dta')">✕</button>
+    </div>
+    <div class="ws-modal-body">
+      <p class="ws-modal-hint">OHRC ss.11, 17 · ESA protected leaves · CBA obligations. Check each item as it is confirmed.</p>
+      <div class="checklist-section-label">GROUNDS &amp; REQUEST</div>
+      <div class="checklist-item"><input type="checkbox" id="dta1"><label for="dta1">Protected ground confirmed (disability, family status, creed, sex, etc.)<span>OHRC ss.1, 11 — identify ground before proceeding</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="dta2"><label for="dta2">Accommodation request made in writing<span>Date, recipient, and method of delivery documented</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="dta3"><label for="dta3">Medical documentation obtained — functional limitations, not diagnosis<span>Functional abilities form; employer cannot demand diagnosis</span></label></div>
+      <div class="checklist-section-label">EMPLOYER OBLIGATIONS</div>
+      <div class="checklist-item"><input type="checkbox" id="dta4"><label for="dta4">Employer acknowledged request in writing<span>Silence = constructive refusal — document non-response</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="dta5"><label for="dta5">Individualized assessment conducted<span>Cannot apply blanket policy — must be tailored to this member</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="dta6"><label for="dta6">Modified duties or alternate placement offered and documented<span>Offer must be specific and practical, not vague</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="dta7"><label for="dta7">If undue hardship claimed — documented with financial or safety evidence<span>Cost or health/safety only — inconvenience is not undue hardship</span></label></div>
+      <div class="checklist-section-label">UNION ROLE</div>
+      <div class="checklist-item"><input type="checkbox" id="dta8"><label for="dta8">Union notified and involved at every step<span>Local 1285 has duty to facilitate — must participate, not just be informed</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="dta9"><label for="dta9">Return-to-work plan documented, signed, with review date<span>Include escalation clause if restrictions change</span></label></div>
+      <div class="checklist-section-label">DEADLINES</div>
+      <div class="checklist-item"><input type="checkbox" id="dta10"><label for="dta10">HRTO complaint deadline verified<span>1 year from last act of discrimination — HRTO s.34(1)</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="dta11"><label for="dta11">CBA Article 4 grievance timelines preserved<span>File grievance if accommodation denied, delayed, or inadequate</span></label></div>
+      <div style="margin-top:18px;display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="dtaToAgent()">⚡ ANALYZE WITH AI</button>
+        <button class="btn btn-outline" onclick="closeWsModal('modal-dta')">CLOSE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Inspection Checklist Modal -->
+<div id="modal-inspection" class="ws-modal-overlay">
+  <div class="ws-modal-box">
+    <div class="ws-modal-header">
+      <span class="ws-modal-title">WAREHOUSE SAFETY INSPECTION</span>
+      <button class="ws-modal-close" onclick="closeWsModal('modal-inspection')">✕</button>
+    </div>
+    <div class="ws-modal-body">
+      <p class="ws-modal-hint">OHSA s.9 · O. Reg. 851 · JHSC Workplace Inspection. Check each item, note deficiencies, then analyze with AI.</p>
+      <div class="checklist-section-label">POWERED EQUIPMENT</div>
+      <div class="checklist-item"><input type="checkbox" id="ins1"><label for="ins1">Forklift / MEWP pre-use inspection records current<span>O. Reg. 851 ss.51, 53 — daily pre-shift inspection required</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="ins2"><label for="ins2">Operator certifications on file and current<span>Must be trained and authorized per O. Reg. 851 s.51(1)</span></label></div>
+      <div class="checklist-section-label">HOUSEKEEPING &amp; ACCESS</div>
+      <div class="checklist-item"><input type="checkbox" id="ins3"><label for="ins3">Aisles, passageways, and emergency exits clear<span>O. Reg. 851 s.11 — 1.1 m minimum clear aisle width</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="ins4"><label for="ins4">Floors free of slip / trip hazards<span>OHSA s.25(2)(h) — reasonable precautions at all times</span></label></div>
+      <div class="checklist-section-label">HAZARDOUS MATERIALS</div>
+      <div class="checklist-item"><input type="checkbox" id="ins5"><label for="ins5">WHMIS labels on all containers<span>WHMIS 2015 — GHS-compliant labels required at point of use</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="ins6"><label for="ins6">Safety Data Sheets (SDS) accessible during each work shift<span>WHMIS Reg. s.16 — must be readily accessible to workers</span></label></div>
+      <div class="checklist-section-label">SAFETY EQUIPMENT</div>
+      <div class="checklist-item"><input type="checkbox" id="ins7"><label for="ins7">PPE available, in good condition, and correctly stored<span>O. Reg. 851 — type appropriate to identified hazard</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="ins8"><label for="ins8">First aid kit stocked, accessible, and checklist current<span>O. Reg. 1101 — contents by worker count on shift</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="ins9"><label for="ins9">Lockout / tagout procedures posted and followed<span>O. Reg. 851 s.76 — energy isolation required before maintenance</span></label></div>
+      <div class="checklist-section-label">JHSC OBLIGATIONS</div>
+      <div class="checklist-item"><input type="checkbox" id="ins10"><label for="ins10">Monthly JHSC inspection completed and minutes posted<span>OHSA s.9(26) — joint worker-management inspection required monthly</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="ins11"><label for="ins11">Outstanding JHSC recommendations tracked with employer responses<span>OHSA s.9(20) — employer must respond in writing within 21 days</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="ins12"><label for="ins12">Incident / near-miss board current<span>OHSA s.51 — critical injury requires immediate MOL notification</span></label></div>
+      <div class="checklist-section-label">ERGONOMICS &amp; ENVIRONMENT</div>
+      <div class="checklist-item"><input type="checkbox" id="ins13"><label for="ins13">MSD risk factors identified (repetition, awkward posture, force, contact stress)<span>OHSA s.25(2)(h) · CSA Z1004-12 — document and report to JHSC</span></label></div>
+      <div class="checklist-item"><input type="checkbox" id="ins14"><label for="ins14">Temperature and ventilation within acceptable range<span>O. Reg. 851 s.128 — adequate heating and ventilation required</span></label></div>
+      <div style="margin-top:18px;display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="inspectionToAgent()">⚡ ANALYZE WITH AI</button>
+        <button class="btn btn-outline" onclick="closeWsModal('modal-inspection')">CLOSE</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Confirm dialog -->
 <div id="confirm-overlay">
@@ -2680,6 +2866,157 @@ setTimeout(checkDeadlines, 1000);
     out.classList.add('show');
   });
 })();
+
+// ── TRIGGER PHRASE DETECTION ──────────────────────────────────────────────────
+
+const TRIGGERS = [
+  {
+    pattern: /\bRTR\b/i,
+    label: 'Right to Refuse Wizard (OHSA s.43)',
+    desc: '"RTR" detected — open the Right to Refuse wizard instead of running a full AI analysis?',
+    action() { closeTriggerBanner(); switchTab('refuse'); }
+  },
+  {
+    pattern: /\bDTA\b/i,
+    label: 'Duty to Accommodate Checklist',
+    desc: '"DTA" detected — open the Duty to Accommodate checklist?',
+    action() { closeTriggerBanner(); openWsModal('modal-dta'); }
+  },
+  {
+    pattern: /\bstep\s*1\b/i,
+    label: 'Step 1 Grievance Form',
+    desc: '"Step 1" detected — open a new Step 1 grievance?',
+    action() { closeTriggerBanner(); goToGrievanceStep('Step 1'); }
+  },
+  {
+    pattern: /\bstep\s*2\b/i,
+    label: 'Step 2 Grievance Escalation',
+    desc: '"Step 2" detected — open a new Step 2 escalation?',
+    action() { closeTriggerBanner(); goToGrievanceStep('Step 2'); }
+  },
+  {
+    pattern: /\binspection\b/i,
+    label: 'Warehouse Safety Inspection Checklist',
+    desc: '"Inspection" detected — open the Warehouse Safety Inspection checklist?',
+    action() { closeTriggerBanner(); openWsModal('modal-inspection'); }
+  }
+];
+
+let _activeTriggerAction = null;
+let _triggerDismissed = false;
+let _triggerDebounce = null;
+
+function detectTrigger() {
+  const text = (document.getElementById('f-problem').value || '') +
+               ' ' +
+               (document.getElementById('f-brief-desc').value || '');
+  if (_triggerDismissed) return;
+  for (const t of TRIGGERS) {
+    if (t.pattern.test(text)) {
+      showTriggerBanner(t);
+      return;
+    }
+  }
+  hideTriggerBanner();
+}
+
+function showTriggerBanner(trigger) {
+  _activeTriggerAction = trigger.action;
+  document.getElementById('trigger-banner-desc').textContent = trigger.desc;
+  document.getElementById('trigger-banner').style.display = 'block';
+}
+
+function hideTriggerBanner() {
+  document.getElementById('trigger-banner').style.display = 'none';
+  _activeTriggerAction = null;
+}
+
+function closeTriggerBanner() {
+  hideTriggerBanner();
+  _triggerDismissed = false;
+}
+
+document.getElementById('trigger-open-btn').addEventListener('click', () => {
+  if (_activeTriggerAction) _activeTriggerAction();
+});
+
+document.getElementById('trigger-dismiss-btn').addEventListener('click', () => {
+  _triggerDismissed = true;
+  hideTriggerBanner();
+});
+
+['f-problem', 'f-brief-desc'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    _triggerDismissed = false;
+    clearTimeout(_triggerDebounce);
+    _triggerDebounce = setTimeout(detectTrigger, 400);
+  });
+});
+
+function goToGrievanceStep(step) {
+  switchTab('grievances');
+  document.getElementById('grv-show-form-btn').click();
+  const sel = document.getElementById('grv-step');
+  if (sel) {
+    for (const opt of sel.options) {
+      if (opt.value === step || opt.text === step) { sel.value = opt.value; break; }
+    }
+  }
+  setTimeout(() => {
+    const el = document.getElementById('grv-grievor');
+    if (el) el.focus();
+  }, 100);
+}
+
+// ── WORKFLOW MODALS ───────────────────────────────────────────────────────────
+
+function openWsModal(id) {
+  document.getElementById(id).classList.add('show');
+}
+
+function closeWsModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+document.querySelectorAll('.ws-modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('show');
+  });
+});
+
+function dtaToAgent() {
+  const unchecked = [...document.querySelectorAll('#modal-dta .checklist-item')]
+    .filter(el => !el.querySelector('input').checked)
+    .map(el => el.querySelector('label').childNodes[0].textContent.trim());
+  const checked = [...document.querySelectorAll('#modal-dta .checklist-item')]
+    .filter(el => el.querySelector('input').checked)
+    .map(el => el.querySelector('label').childNodes[0].textContent.trim());
+  let summary = 'DUTY TO ACCOMMODATE ISSUE.\n';
+  if (checked.length) summary += `\nCOMPLETED STEPS:\n${checked.map(s => '• ' + s).join('\n')}`;
+  if (unchecked.length) summary += `\nOUTSTANDING / NOT YET DONE:\n${unchecked.map(s => '• ' + s).join('\n')}`;
+  document.getElementById('f-problem').value = summary;
+  document.getElementById('f-incident-type').value = 'Accommodation';
+  closeWsModal('modal-dta');
+  switchTab('shield');
+  showToast('DTA checklist loaded — activate WorkerShield to analyze', 'var(--gold)');
+}
+
+function inspectionToAgent() {
+  const failed = [...document.querySelectorAll('#modal-inspection .checklist-item')]
+    .filter(el => !el.querySelector('input').checked)
+    .map(el => el.querySelector('label').childNodes[0].textContent.trim());
+  const passed = [...document.querySelectorAll('#modal-inspection .checklist-item')]
+    .filter(el => el.querySelector('input').checked)
+    .map(el => el.querySelector('label').childNodes[0].textContent.trim());
+  let summary = 'WORKPLACE SAFETY INSPECTION — JHSC findings.\n';
+  if (passed.length) summary += `\nCOMPLIANT ITEMS:\n${passed.map(s => '• ' + s).join('\n')}`;
+  if (failed.length) summary += `\nDEFICIENCIES REQUIRING ACTION:\n${failed.map(s => '• ' + s).join('\n')}`;
+  document.getElementById('f-problem').value = summary;
+  document.getElementById('f-incident-type').value = 'Safety';
+  closeWsModal('modal-inspection');
+  switchTab('shield');
+  showToast('Inspection findings loaded — activate WorkerShield to analyze', 'var(--gold)');
+}
 
 </script>
 </body>
