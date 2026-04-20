@@ -6,12 +6,34 @@ const MODEL = 'claude-sonnet-4-20250514';
 const MAX_TOKENS = 3000;
 const TEMPERATURE = 0.2;
 
+const ALLOWED_ORIGIN = 'https://kevindm1989-afk.github.io';
+
 const CORS = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE',
   'Access-Control-Allow-Headers': 'Content-Type',
+  'Vary': 'Origin',
   'Content-Type': 'application/json'
 };
+
+// ─── RATE LIMITING (in-memory, per-isolate) ─────────────────────────────────
+// 30 requests per IP per hour
+const RATE_LIMIT_MAX = 30;
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
+
+function checkRateLimit(ip) {
+  if (!globalThis.__wsRateLimit) globalThis.__wsRateLimit = new Map();
+  const store = globalThis.__wsRateLimit;
+  const now = Date.now();
+  const entry = store.get(ip);
+  if (!entry || now - entry.start > RATE_LIMIT_WINDOW_MS) {
+    store.set(ip, { start: now, count: 1 });
+    return true;
+  }
+  entry.count++;
+  if (entry.count > RATE_LIMIT_MAX) return false;
+  return true;
+}
 
 // ─── CBA TEXT ────────────────────────────────────────────────────────────────
 
@@ -185,6 +207,30 @@ INVESTIGATION:
 
 const AGENT_PROMPTS = {
 
+  wsib: `You are a WSIB / WSIA specialist with 20 years experience representing injured workers and unions in Ontario. You know how employers under-report, mis-code, and pressure workers off claims, and how to stop it.
+
+Analyze through:
+- WSIA s.21 — employer obligation to file Form 7 within 3 business days of learning of a workplace injury or occupational disease that requires healthcare beyond first aid OR causes lost time / modified duties / earnings loss
+- WSIA s.22 — worker obligation to notify employer; worker right to file Form 6
+- WSIA s.23 — healthcare provider Form 8
+- WSIA s.37 — entitlement to benefits
+- WSIA ss.40-41 — return-to-work and re-employment obligations: cooperation duty, suitable and available employment, accommodation to the point of undue hardship, re-employment obligation for employers of 20+ workers where worker has 1+ year of continuous employment (obligation runs for the earlier of 2 years from injury / 1 year from medical fitness / age 65)
+- WSIA s.43 — Loss of Earnings benefits (LOE)
+- WSIA s.44 — review of LOE
+- WSIA s.84 — re-employment penalties (up to 1 year of net wages + reinstatement)
+- NEER / CAD-7 / MAP — experience-rating programs that financially incentivize employers to suppress claims; flag suspected claims suppression and document it
+- Worker rights: right to file independently, right to copies of all forms, right to functional abilities form, right to Office of the Worker Adviser (OWA), right to appeal through WSIAT
+- Employer obligations: Form 7 filing, no penalty for filing (WSIA s.22.1 — anti-reprisal), pay for day of injury (s.24), maintain employment benefits during recovery, cooperate in RTW
+- Concurrent CBA Article 5 / Article 18 protections — discipline tied to a workplace injury is presumptively reprisal
+
+Your output must include:
+1. Whether a Form 7 was triggered and the deadline (3 business days)
+2. Whether the employer met its s.40-41 cooperation/RTW duties
+3. Whether the worker should file a Form 6 independently
+4. Whether claims-suppression / reprisal indicators are present (NEER pressure, "stay home and we'll pay you", refusal to file, modified duties that are not suitable)
+5. Concrete next steps with deadlines (file Form 6, contact OWA, WSIB Fair Practices Commission, WSIAT appeal windows)
+6. Cite specific WSIA sections. Be direct. Assume the employer will minimize.`,
+
   intake: `You are the WorkerShield Intake Agent — the CEO orchestrator of a multi-agent Ontario labour relations system.
 
 You receive workplace problems from union stewards and JHSC co-chairs at Saputo Dairy Products Canada G.P. (Unifor Local 1285) or any other Ontario unionized workplace.
@@ -193,7 +239,7 @@ Your job:
 1. Identify all core legal issues (OHSA, ESA, OHRC, CBA, WSIA — specify which apply and which sections)
 2. State urgency: IMMEDIATE / HIGH / STANDARD
 3. List key facts requiring documentation
-4. Identify which specialist agents are needed — use ONLY these exact words: ohsa, cba, esa, ohrc, evidence, email, mol, arbitration
+4. Identify which specialist agents are needed — use ONLY these exact words: ohsa, cba, esa, ohrc, wsib, evidence, email, mol, arbitration
 5. Anticipate management's counterarguments
 6. State what a winning outcome looks like
 
@@ -407,6 +453,27 @@ export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: CORS });
+    }
+
+    // ── ENV VALIDATION ──
+    const requiredEnv = ['ANTHROPIC_API_KEY', 'GITHUB_TOKEN', 'GITHUB_OWNER', 'GITHUB_DATA_REPO'];
+    const missing = requiredEnv.filter(k => !env[k]);
+    if (missing.length) {
+      return new Response(
+        JSON.stringify({ error: 'Server misconfigured: missing environment variables', missing }),
+        { status: 500, headers: CORS }
+      );
+    }
+
+    // ── RATE LIMITING ──
+    const ip = request.headers.get('CF-Connecting-IP') ||
+               request.headers.get('x-forwarded-for') ||
+               'unknown';
+    if (!checkRateLimit(ip)) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded. Try again later.' }),
+        { status: 429, headers: CORS }
+      );
     }
 
     const url = new URL(request.url);

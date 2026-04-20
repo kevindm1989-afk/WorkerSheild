@@ -6,6 +6,9 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
+  "lang": "en-CA",
+  "dir": "ltr",
+  "categories": ["productivity", "business"],
   "theme_color": "#0a1628",
   "background_color": "#0a1628",
   "icons": [

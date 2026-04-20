@@ -854,6 +854,82 @@
       cursor: pointer;
     }
     #stop-btn.show { display: block; }
+    /* ── Right-to-Refuse Wizard ── */
+    .rtr-wizard { display:flex; flex-direction:column; gap:12px; }
+    .rtr-step {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .rtr-step-num { color: var(--gold); font-size: 11px; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; }
+    .rtr-step-q { color: var(--text); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+    .rtr-step-help { color: var(--text-dim); font-size: 12px; line-height: 1.5; margin-bottom: 10px; }
+    .rtr-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .rtr-step.done { border-left-color: #4ade80; background: rgba(74,222,128,.05); }
+    .rtr-step.blocked { border-left-color: #f87171; background: rgba(248,113,113,.05); }
+    .rtr-result {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 8px;
+      background: rgba(212,160,23,.08);
+      border: 1px solid var(--gold-dim);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.6;
+      display: none;
+    }
+    .rtr-result.show { display:block; }
+    .rtr-reprisal-banner {
+      margin-top: 16px; padding: 12px;
+      background: rgba(248,113,113,.08);
+      border: 1px solid #7a2222;
+      border-radius: 6px;
+      color: #fca5a5;
+      font-size: 12px; line-height: 1.5;
+    }
+    .rtr-reprisal-banner strong { color: #f87171; }
+
+    /* ── Deadline Calculator ── */
+    .dl-result {
+      margin-top: 14px;
+      display: none;
+    }
+    .dl-result.show { display:block; }
+    .dl-row {
+      display:flex; justify-content:space-between; gap:10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .dl-row:last-child { border-bottom:none; }
+    .dl-row .dl-label { color: var(--text-dim); }
+    .dl-row .dl-date { color: var(--gold); font-weight: 600; font-variant-numeric: tabular-nums; }
+    .dl-row.dl-final .dl-date { color: #f87171; }
+
+    /* ── Confidentiality Splash ── */
+    .ws-splash {
+      position: fixed; inset: 0;
+      background: rgba(10,22,40,.96);
+      backdrop-filter: blur(6px);
+      z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .ws-splash-card {
+      max-width: 380px; width: 100%;
+      background: linear-gradient(180deg, #0f1f3a 0%, #0a1628 100%);
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 28px 22px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(212,160,23,.2);
+    }
+    .ws-splash-logo { color: var(--gold); font-size: 22px; font-weight: 800; letter-spacing: 2px; margin-bottom: 4px; }
+    .ws-splash-sub { color: var(--text-dim); font-size: 11px; letter-spacing: 1.5px; margin-bottom: 18px; text-transform: uppercase; }
+    .ws-splash-text { color: var(--text); font-size: 13px; line-height: 1.6; margin-bottom: 22px; text-align: left; }
+    .ws-splash .btn-primary { width: 100%; }
   </style>
 </head>
 <body>
@@ -1182,6 +1258,88 @@
       </div>
     </div>
 
+    <!-- ===== REFUSE PANEL ===== -->
+    <div id="panel-refuse" class="tab-panel">
+      <div class="tab-title">RIGHT TO REFUSE — OHSA ss.43-45</div>
+
+      <div class="rtr-wizard">
+        <div class="rtr-step" data-step="1">
+          <div class="rtr-step-num">STEP 1</div>
+          <div class="rtr-step-q">Have you identified an unsafe condition, work, or piece of equipment?</div>
+          <div class="rtr-step-help">OHSA s.43(3): you may refuse work you have reason to believe is likely to endanger yourself or another worker.</div>
+          <div class="rtr-actions">
+            <button class="btn btn-sm btn-outline rtr-no" data-step="1">NO</button>
+            <button class="btn btn-sm btn-primary rtr-yes" data-step="1">YES → CONTINUE</button>
+          </div>
+        </div>
+
+        <div class="rtr-step" data-step="2">
+          <div class="rtr-step-num">STEP 2</div>
+          <div class="rtr-step-q">Have you reported it to your supervisor and stayed in a safe place near your workstation?</div>
+          <div class="rtr-step-help">OHSA s.43(3): tell the supervisor you are refusing and WHY. Stay in a safe place. You continue to be paid (s.43(7)).</div>
+          <div class="rtr-actions">
+            <button class="btn btn-sm btn-outline rtr-no" data-step="2">NO</button>
+            <button class="btn btn-sm btn-primary rtr-yes" data-step="2">YES → CONTINUE</button>
+          </div>
+        </div>
+
+        <div class="rtr-step" data-step="3">
+          <div class="rtr-step-num">STEP 3</div>
+          <div class="rtr-step-q">Has the supervisor investigated WITH a JHSC worker rep (or another worker you chose) present, and the situation is still unsafe?</div>
+          <div class="rtr-step-help">OHSA s.43(4): Stage 1 investigation must include the worker AND a worker-side JHSC member or another worker the refusing worker selects.</div>
+          <div class="rtr-actions">
+            <button class="btn btn-sm btn-outline rtr-no" data-step="3">NO — DEMAND ONE</button>
+            <button class="btn btn-sm btn-primary rtr-yes" data-step="3">YES → CONTINUE</button>
+          </div>
+        </div>
+
+        <div class="rtr-step" data-step="4">
+          <div class="rtr-step-num">STEP 4</div>
+          <div class="rtr-step-q">Have you continued the refusal in writing and called the Ministry of Labour (1-877-202-0008)?</div>
+          <div class="rtr-step-help">OHSA s.43(6): if still unresolved, you may continue to refuse. Notify employer and JHSC. The MOL must be called to send an inspector.</div>
+          <div class="rtr-actions">
+            <button class="btn btn-sm btn-outline rtr-no" data-step="4">NO — CALL NOW</button>
+            <button class="btn btn-sm btn-primary rtr-yes" data-step="4">YES → CONTINUE</button>
+          </div>
+        </div>
+
+        <div class="rtr-step" data-step="5">
+          <div class="rtr-step-num">STEP 5</div>
+          <div class="rtr-step-q">Has a MOL inspector attended, investigated, and issued a written decision?</div>
+          <div class="rtr-step-help">OHSA s.43(7): until the inspector decides, the employer cannot assign that work to another worker without informing them in writing of the refusal AND in the presence of a JHSC worker rep.</div>
+          <div class="rtr-actions">
+            <button class="btn btn-sm btn-outline rtr-no" data-step="5">NO — STILL REFUSING</button>
+            <button class="btn btn-sm btn-primary rtr-yes" data-step="5">YES → DOCUMENT</button>
+          </div>
+        </div>
+
+        <div class="rtr-result" id="rtr-result"></div>
+
+        <div class="rtr-reprisal-banner">
+          <strong>OHSA s.50 — REPRISAL PROTECTION:</strong> No employer may dismiss, discipline, intimidate, or threaten any worker for exercising rights under OHSA, including refusing unsafe work. Reprisal complaints go to the Ontario Labour Relations Board within 90 days.
+        </div>
+      </div>
+
+      <!-- Article 4 Deadline Calculator -->
+      <div class="tab-title" style="margin-top:28px">ARTICLE 4 DEADLINE CALCULATOR</div>
+      <div class="form-wrap">
+        <div class="field">
+          <label>Date of Incident (or Discharge)</label>
+          <input type="date" id="dl-incident-date">
+        </div>
+        <div class="field">
+          <label>Grievance Type</label>
+          <select id="dl-type">
+            <option value="standard">Standard Grievance (Article 4.01)</option>
+            <option value="policy">Policy Grievance (Article 4.02)</option>
+            <option value="discharge">Discharge Grievance (Article 4.11)</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="dl-calc-btn">▲ CALCULATE DEADLINES</button>
+        <div id="dl-result" class="dl-result"></div>
+      </div>
+    </div>
+
   </div><!-- /tabs-content -->
 
   <!-- Bottom tab bar -->
@@ -1198,9 +1356,25 @@
       <span class="tab-icon">⚖️</span>
       <span class="tab-label">GRIEVANCES</span>
     </button>
+    <button class="tab-btn" data-tab="refuse">
+      <span class="tab-icon">⛔</span>
+      <span class="tab-label">REFUSE</span>
+    </button>
   </div>
 
 </div><!-- /app -->
+
+<!-- Confidentiality splash -->
+<div id="ws-splash" class="ws-splash" style="display:none">
+  <div class="ws-splash-card">
+    <div class="ws-splash-logo">🛡️ WORKERSHIELD</div>
+    <div class="ws-splash-sub">Ontario Labour Defense — Unifor Local 1285</div>
+    <div class="ws-splash-text">
+      This application contains confidential union documentation protected by solicitor-client privilege. Authorized union personnel only. Do not share access or screenshots.
+    </div>
+    <button class="btn btn-primary" id="ws-splash-btn">I UNDERSTAND — ENTER</button>
+  </div>
+</div>
 
 <!-- Stop button -->
 <button id="stop-btn">■ STOP</button>
@@ -1233,28 +1407,9 @@ const WORKER_URL = 'https://workershield.kevindm1989.workers.dev';
 // ── SERVICE WORKER (inline) ──────────────────────────────────────────────────
 
 if ('serviceWorker' in navigator) {
-  const swCode = `
-const CACHE = 'workershield-v6';
-const SHELL = ['./', './index.html'];
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL).catch(() => {})));
-  self.skipWaiting();
-});
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch', e => {
-  if (e.request.url.includes('workershield.kevindm1989.workers.dev')) return;
-  e.respondWith(
-    fetch(e.request).catch(() =>
-      caches.match(e.request).then(r => r || caches.match('./index.html'))
-    )
-  );
-});
-`;
-  const swBlob = new Blob([swCode], { type: 'application/javascript' });
-  navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
 }
 
 // ── INSTALL MODAL ────────────────────────────────────────────────────────────
@@ -2079,7 +2234,7 @@ async function callAgent(agentType, problem, context, previousOutputs) {
 
 const AGENT_LABELS = {
   intake: 'Intake', ohsa: 'OHSA', cba: 'CBA', esa: 'ESA',
-  ohrc: 'OHRC', evidence: 'Evidence', email: 'Correspondence',
+  ohrc: 'OHRC', wsib: 'WSIB', evidence: 'Evidence', email: 'Correspondence',
   mol: 'MOL', arbitration: 'Arbitration', qc: 'Quality Control', final: 'Final'
 };
 
@@ -2128,10 +2283,10 @@ async function runPipeline() {
 
   // Parse specialists
   const specialistMatch = intakeOutput.match(/SPECIALISTS?:\s*([^\n]+)/i);
-  const ALL_SPECIALISTS = ['ohsa', 'cba', 'esa', 'ohrc', 'evidence', 'email', 'mol', 'arbitration'];
+  const ALL_SPECIALISTS = ['ohsa', 'cba', 'esa', 'ohrc', 'wsib', 'evidence', 'email', 'mol', 'arbitration'];
   let specialists = [];
   if (specialistMatch) {
-    specialists = specialistMatch[1].toLowerCase().match(/\b(ohsa|cba|esa|ohrc|evidence|email|mol|arbitration)\b/g) || [];
+    specialists = specialistMatch[1].toLowerCase().match(/\b(ohsa|cba|esa|ohrc|wsib|evidence|email|mol|arbitration)\b/g) || [];
     specialists = [...new Set(specialists)];
   }
   if (!specialists.length) specialists = ['ohsa', 'cba', 'evidence'];
@@ -2315,6 +2470,132 @@ document.getElementById('copy-btn').addEventListener('click', async () => {
 
 // Check deadline alerts on load (after brief delay to let grievances load)
 setTimeout(checkDeadlines, 1000);
+
+// ── Confidentiality Splash ───────────────────────────────────────────────────
+(function initSplash(){
+  try {
+    if (!localStorage.getItem('ws_accepted')) {
+      const el = document.getElementById('ws-splash');
+      if (el) el.style.display = 'flex';
+    }
+  } catch(e) {}
+  const btn = document.getElementById('ws-splash-btn');
+  if (btn) btn.addEventListener('click', () => {
+    try { localStorage.setItem('ws_accepted', new Date().toISOString()); } catch(e) {}
+    const el = document.getElementById('ws-splash');
+    if (el) el.style.display = 'none';
+  });
+})();
+
+// ── Right-to-Refuse Wizard ───────────────────────────────────────────────────
+(function initRTR(){
+  const RTR_GUIDANCE = {
+    1: { yes:'Good. The hazard is identified. Document it now (photo, time, location, witnesses) and proceed to Step 2.',
+         no:'STOP. There is no refusal yet. Document the concern in the INCIDENTS tab and raise it with your JHSC rep at the next meeting.' },
+    2: { yes:'Reported and remained safe. You continue to be paid (OHSA s.43(7)). Demand the Stage 1 investigation.',
+         no:'You MUST tell your supervisor and stay in a safe place near your workstation, otherwise this is not a protected refusal under OHSA s.43(3).' },
+    3: { yes:'Stage 1 investigation done and still unsafe. Move to Stage 2 \u2014 continue refusing in writing and call the MOL.',
+         no:'OHSA s.43(4) requires the investigation include a JHSC worker rep OR another worker you select. Demand it before any inspection happens.' },
+    4: { yes:'MOL has been called. Do not perform the work. Document everything in the INCIDENTS tab.',
+         no:'Call the Ministry of Labour at 1-877-202-0008 NOW. The employer cannot resolve the refusal at Stage 2 without an inspector.' },
+    5: { yes:'Inspector has decided. Save the inspector\u2019s order/report. If you disagree, you can appeal under OHSA s.61.',
+         no:'Until the inspector decides, the employer cannot reassign the work without (a) telling the next worker IN WRITING about your refusal AND (b) doing so in the presence of a JHSC worker rep (OHSA s.43(7)).' }
+  };
+  const result = document.getElementById('rtr-result');
+  function show(stepNum, kind){
+    const guidance = RTR_GUIDANCE[stepNum] && RTR_GUIDANCE[stepNum][kind];
+    if (!result || !guidance) return;
+    result.innerHTML = '<strong style="color:var(--gold)">STEP ' + stepNum + ' \u2014 ' +
+      (kind==='yes' ? 'PROCEED' : 'BLOCKED') + ':</strong><br>' + guidance;
+    result.classList.add('show');
+    document.querySelectorAll('.rtr-step').forEach(s => {
+      const n = parseInt(s.dataset.step,10);
+      s.classList.toggle('done', kind==='yes' && n <= stepNum);
+      s.classList.toggle('blocked', kind==='no' && n === stepNum);
+    });
+  }
+  document.querySelectorAll('.rtr-yes').forEach(b => b.addEventListener('click', () => show(parseInt(b.dataset.step,10),'yes')));
+  document.querySelectorAll('.rtr-no').forEach(b => b.addEventListener('click', () => show(parseInt(b.dataset.step,10),'no')));
+})();
+
+// ── Article 4 Deadline Calculator ────────────────────────────────────────────
+(function initDeadlineCalc(){
+  const btn = document.getElementById('dl-calc-btn');
+  if (!btn) return;
+  function addWorkingDays(date, days){
+    const d = new Date(date.getTime());
+    let added = 0;
+    while (added < days){
+      d.setDate(d.getDate() + 1);
+      const dow = d.getDay();
+      if (dow !== 0 && dow !== 6) added++;
+    }
+    return d;
+  }
+  function fmt(d){
+    return d.toLocaleDateString('en-CA', { weekday:'short', year:'numeric', month:'short', day:'numeric' });
+  }
+  btn.addEventListener('click', () => {
+    const dateStr = document.getElementById('dl-incident-date').value;
+    const type = document.getElementById('dl-type').value;
+    const out = document.getElementById('dl-result');
+    if (!dateStr) { showToast('Pick the incident date first', 'var(--amber)'); return; }
+    const incident = new Date(dateStr + 'T12:00:00');
+    let rows = [];
+    if (type === 'standard'){
+      const complaint = addWorkingDays(incident, 5);
+      const supReply  = addWorkingDays(complaint, 2);
+      const step1File = addWorkingDays(supReply, 5);
+      const step1Mtg  = addWorkingDays(step1File, 3);
+      const step1Dec  = addWorkingDays(step1Mtg, 5);
+      const step2File = addWorkingDays(step1Dec, 5);
+      const step2Mtg  = addWorkingDays(step2File, 5);
+      const step2Dec  = addWorkingDays(step2Mtg, 10);
+      const arbNotice = addWorkingDays(step2Dec, 10);
+      rows = [
+        ['Complaint Stage \u2014 raise with supervisor by', complaint],
+        ['Supervisor\u2019s reply due by', supReply],
+        ['Step 1 \u2014 file written grievance by', step1File],
+        ['Step 1 meeting must be held by', step1Mtg],
+        ['Step 1 written decision due by', step1Dec],
+        ['Step 2 \u2014 forward to HR by', step2File],
+        ['Step 2 meeting must be held by', step2Mtg],
+        ['Step 2 written decision due by', step2Dec],
+        ['Arbitration notice deadline', arbNotice]
+      ];
+    } else if (type === 'policy'){
+      const policyFile = addWorkingDays(incident, 15);
+      const companyReply = addWorkingDays(policyFile, 5);
+      const arbNotice = addWorkingDays(companyReply, 10);
+      rows = [
+        ['Policy grievance \u2014 file in writing by', policyFile],
+        ['Company reply due by (no reply = denied)', companyReply],
+        ['Arbitration notice deadline', arbNotice]
+      ];
+    } else {
+      const step2File = addWorkingDays(incident, 5);
+      const step2Mtg  = addWorkingDays(step2File, 5);
+      const step2Dec  = addWorkingDays(step2Mtg, 10);
+      const arbNotice = addWorkingDays(step2Dec, 10);
+      rows = [
+        ['Discharge grievance \u2014 file at Step 2 by', step2File],
+        ['Step 2 meeting must be held by', step2Mtg],
+        ['Step 2 written decision due by', step2Dec],
+        ['Arbitration notice deadline', arbNotice]
+      ];
+    }
+    out.innerHTML = rows.map((r,i) =>
+      '<div class="dl-row' + (i === rows.length-1 ? ' dl-final' : '') + '">' +
+        '<span class="dl-label">' + r[0] + '</span>' +
+        '<span class="dl-date">' + fmt(r[1]) + '</span>' +
+      '</div>'
+    ).join('') +
+    '<div style="margin-top:10px;padding:10px;background:rgba(248,113,113,.08);border:1px solid #7a2222;border-radius:6px;color:#fca5a5;font-size:11px;line-height:1.5">' +
+      '<strong style="color:#f87171">CBA s.4.09:</strong> Time limits are MANDATORY. Grievance not filed or appealed within these limits is deemed abandoned. Working days = Mon-Fri only; statutory holidays are not deducted here \u2014 verify against the holiday calendar.' +
+    '</div>';
+    out.classList.add('show');
+  });
+})();
 
 </script>
 </body>
