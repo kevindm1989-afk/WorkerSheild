@@ -500,6 +500,18 @@ export default {
         if (context?.local) userMessage += `Union/Local: ${context.local}\n`;
         if (context?.employer) userMessage += `Employer: ${context.employer}\n`;
         if (context?.role) userMessage += `Active Role: ${context.role}\n`;
+
+        const hasProfile = context?.memberRole || context?.seniorityDate || context?.incidentDate || context?.mgmtPerson || context?.incidentType || context?.briefDesc;
+        if (hasProfile) {
+          userMessage += `\nMEMBER PROFILE:\n`;
+          if (context.memberRole)    userMessage += `  Job Title/Role: ${context.memberRole}\n`;
+          if (context.seniorityDate) userMessage += `  Seniority Date: ${context.seniorityDate}\n`;
+          if (context.incidentDate)  userMessage += `  Incident Date: ${context.incidentDate}\n`;
+          if (context.mgmtPerson)    userMessage += `  Management Person Involved: ${context.mgmtPerson}\n`;
+          if (context.incidentType)  userMessage += `  Incident Type: ${context.incidentType}\n`;
+          if (context.briefDesc)     userMessage += `  Summary: ${context.briefDesc}\n`;
+        }
+
         if (context?.caseHistory) userMessage += `\nCASE HISTORY:\n${context.caseHistory}\n`;
         if (context?.keyPeople) userMessage += `\nKEY PEOPLE & DATES:\n${context.keyPeople}\n`;
 
