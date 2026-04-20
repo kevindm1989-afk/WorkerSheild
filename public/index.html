@@ -878,6 +878,27 @@
           <button id="install-not-now">NOT NOW</button>
         </div>
       </div>
+      <!-- Desktop fallback content (browsers without beforeinstallprompt) -->
+      <div id="install-desktop" style="display:none">
+        <div class="install-modal-body">
+          <p>Install WorkerShield as a desktop app for one-click access:</p>
+          <div class="install-step">
+            <div class="install-step-num">1</div>
+            <div class="install-step-text">Look for the <strong>install icon</strong> ⊕ on the right side of your browser's address bar (Chrome, Edge, Brave)</div>
+          </div>
+          <div class="install-step">
+            <div class="install-step-num">2</div>
+            <div class="install-step-text">Or open the browser menu (⋮) and choose <strong>"Install WorkerShield…"</strong> / <strong>"Apps → Install this site"</strong></div>
+          </div>
+          <div class="install-step">
+            <div class="install-step-num">3</div>
+            <div class="install-step-text">Click <strong>Install</strong> in the dialog that appears</div>
+          </div>
+        </div>
+        <div class="install-modal-actions">
+          <button id="install-not-now-desktop">GOT IT — CLOSE</button>
+        </div>
+      </div>
       <!-- iOS content -->
       <div id="install-ios" style="display:none">
         <div class="install-modal-body">
@@ -927,6 +948,7 @@
             <h1>WORKERSHIELD</h1>
             <p>Ontario Labour Defense · Multi-Agent</p>
           </div>
+          <button id="header-install-btn" title="Install WorkerShield as an app" style="margin-left:auto;background:var(--gold);color:var(--navy);border:none;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;padding:8px 10px;cursor:pointer;border-radius:3px;white-space:nowrap;">📲 INSTALL</button>
         </div>
       </div>
 
@@ -1227,7 +1249,7 @@ const WORKER_URL = 'https://workershield.kevindm1989.workers.dev';
 
 if ('serviceWorker' in navigator) {
   const swCode = `
-const CACHE = 'workershield-v2';
+const CACHE = 'workershield-v3';
 const SHELL = ['./', './index.html'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL).catch(() => {})));
@@ -1254,60 +1276,94 @@ self.addEventListener('fetch', e => {
 
 let deferredPrompt = null;
 const installOverlay = document.getElementById('install-overlay');
+const panelAndroid = document.getElementById('install-android');
+const panelIos = document.getElementById('install-ios');
+const panelDesktop = document.getElementById('install-desktop');
+
+function isStandalone() {
+  return window.navigator.standalone === true ||
+         window.matchMedia('(display-mode: standalone)').matches;
+}
+
+function detectPlatform() {
+  const ua = navigator.userAgent;
+  if (/iphone|ipad|ipod/i.test(ua)) return 'ios';
+  if (/android/i.test(ua)) return 'android';
+  return 'desktop';
+}
+
+function openInstallModal(force) {
+  if (isStandalone()) return;
+  if (!force && localStorage.getItem('ws_install_dismissed_v2')) return;
+
+  panelAndroid.style.display = 'none';
+  panelIos.style.display = 'none';
+  panelDesktop.style.display = 'none';
+
+  const p = detectPlatform();
+  if (p === 'ios') {
+    panelIos.style.display = '';
+  } else if (p === 'android' && deferredPrompt) {
+    panelAndroid.style.display = '';
+  } else if (deferredPrompt) {
+    // Desktop Chrome/Edge with native prompt available
+    panelAndroid.style.display = '';
+  } else {
+    panelDesktop.style.display = '';
+  }
+
+  installOverlay.classList.add('show');
+}
 
 function dismissInstall() {
   installOverlay.classList.remove('show');
   localStorage.setItem('ws_install_dismissed_v2', '1');
 }
 
-function showInstallModal() {
-  if (localStorage.getItem('ws_install_dismissed_v2')) return;
-  if (window.navigator.standalone) return; // already installed on iOS
-
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
-  const isAndroid = /android/i.test(navigator.userAgent);
-
-  if (isIOS) {
-    document.getElementById('install-ios').style.display = '';
-    installOverlay.classList.add('show');
-  } else if (deferredPrompt) {
-    document.getElementById('install-android').style.display = '';
-    installOverlay.classList.add('show');
-  }
-}
-
-// Android: capture the native install prompt
+// Capture browser's native install prompt (Chrome/Edge/Brave/Android)
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
-  // Show after a short delay so the page loads first
-  setTimeout(showInstallModal, 2500);
 });
 
-// iOS: show after delay if in Safari and not already installed
-(function() {
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
-  const isSafari = /safari/i.test(navigator.userAgent) && !/chrome|crios|fxios/i.test(navigator.userAgent);
-  if (isIOS && isSafari) {
-    setTimeout(showInstallModal, 2500);
-  }
-})();
+// Auto-show shortly after page loads
+window.addEventListener('load', () => {
+  setTimeout(() => openInstallModal(false), 1500);
+});
 
-// Android install button
+// Header button always opens the modal (even after dismissal)
+const headerInstallBtn = document.getElementById('header-install-btn');
+if (headerInstallBtn) {
+  headerInstallBtn.addEventListener('click', () => openInstallModal(true));
+  if (isStandalone()) headerInstallBtn.style.display = 'none';
+}
+
+// "Add to Home Screen" button — triggers native prompt or falls back
 document.getElementById('install-android-btn').addEventListener('click', async () => {
   if (deferredPrompt) {
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     deferredPrompt = null;
-    if (outcome === 'accepted') localStorage.setItem('ws_install_dismissed', '1');
+    if (outcome === 'accepted') localStorage.setItem('ws_install_dismissed_v2', '1');
     installOverlay.classList.remove('show');
+  } else {
+    panelAndroid.style.display = 'none';
+    panelDesktop.style.display = '';
   }
+});
+
+// Hide install UI once installed
+window.addEventListener('appinstalled', () => {
+  localStorage.setItem('ws_install_dismissed_v2', '1');
+  installOverlay.classList.remove('show');
+  if (headerInstallBtn) headerInstallBtn.style.display = 'none';
 });
 
 // Close / dismiss buttons
 document.getElementById('install-close').addEventListener('click', dismissInstall);
 document.getElementById('install-not-now').addEventListener('click', dismissInstall);
 document.getElementById('install-not-now-ios').addEventListener('click', dismissInstall);
+document.getElementById('install-not-now-desktop').addEventListener('click', dismissInstall);
 
 // Tap outside modal to dismiss
 installOverlay.addEventListener('click', e => {
