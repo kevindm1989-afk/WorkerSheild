@@ -1605,12 +1605,39 @@
 <!-- Login overlay (shown by default; hidden by JS when auth valid) -->
 <div id="ws-login-overlay">
   <div class="login-card">
-    <div class="login-logo">🛡️ WORKERSHIELD</div>
-    <div class="login-sub">Unifor Local 1285 — Restricted Access</div>
-    <div class="login-hint">This tool is for authorized Unifor Local 1285 stewards and JHSC co-chairs only. Enter your access code to continue.</div>
-    <div id="login-error" class="login-error"></div>
-    <input type="password" id="login-code" placeholder="ACCESS CODE" autocomplete="current-password" spellcheck="false">
-    <button class="btn btn-primary" id="login-btn" style="width:100%">ENTER WORKERSHIELD</button>
+
+    <!-- Sign-in view -->
+    <div id="login-view">
+      <div class="login-logo">🛡️ WORKERSHIELD</div>
+      <div class="login-sub">Unifor Local 1285 — Restricted Access</div>
+      <div class="login-hint">Authorized stewards and JHSC co-chairs only. Enter your access code to continue.</div>
+      <div id="login-error" class="login-error"></div>
+      <input type="password" id="login-code" placeholder="ACCESS CODE" autocomplete="current-password" spellcheck="false">
+      <button class="btn btn-primary" id="login-btn" style="width:100%;margin-bottom:14px">ENTER WORKERSHIELD</button>
+      <div style="text-align:center">
+        <button id="show-request-btn" style="background:none;border:none;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;cursor:pointer;text-decoration:underline;padding:0">Don't have a code? Request access</button>
+      </div>
+    </div>
+
+    <!-- Request access view -->
+    <div id="request-view" style="display:none">
+      <div class="login-logo">🛡️ WORKERSHIELD</div>
+      <div class="login-sub">Request Access</div>
+      <div class="login-hint">Your request will be reviewed by the union steward. You'll receive the access code by email if approved.</div>
+      <div id="request-error" class="login-error"></div>
+      <div id="request-success" style="display:none;background:rgba(74,222,128,.08);border:1px solid #166534;border-radius:6px;padding:14px;color:#4ade80;font-size:13px;line-height:1.5;margin-bottom:14px">
+        ✓ Request submitted. The steward will follow up at the email address you provided.
+      </div>
+      <input type="text" id="req-name" placeholder="Full Name *" style="width:100%;background:var(--navy);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:10px 12px;margin-bottom:10px;box-sizing:border-box" spellcheck="false">
+      <input type="email" id="req-email" placeholder="Email Address *" style="width:100%;background:var(--navy);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:10px 12px;margin-bottom:10px;box-sizing:border-box" spellcheck="false">
+      <input type="text" id="req-title" placeholder="Job Title / Role" style="width:100%;background:var(--navy);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:10px 12px;margin-bottom:10px;box-sizing:border-box" spellcheck="false">
+      <textarea id="req-message" placeholder="Anything else the steward should know (optional)" maxlength="300" style="width:100%;background:var(--navy);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:10px 12px;margin-bottom:14px;box-sizing:border-box;min-height:70px;resize:vertical" spellcheck="false"></textarea>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary" id="submit-request-btn" style="flex:1">SUBMIT REQUEST</button>
+        <button class="btn btn-outline" id="back-to-login-btn">BACK</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -2898,6 +2925,60 @@ function logout() {
   document.getElementById('login-btn').addEventListener('click', doLogin);
   document.getElementById('login-code').addEventListener('keydown', e => {
     if (e.key === 'Enter') doLogin();
+  });
+
+  // Request access flow
+  document.getElementById('show-request-btn').addEventListener('click', () => {
+    document.getElementById('login-view').style.display = 'none';
+    document.getElementById('request-view').style.display = 'block';
+  });
+  document.getElementById('back-to-login-btn').addEventListener('click', () => {
+    document.getElementById('request-view').style.display = 'none';
+    document.getElementById('login-view').style.display = 'block';
+    document.getElementById('request-error').style.display = 'none';
+    document.getElementById('request-success').style.display = 'none';
+  });
+  document.getElementById('submit-request-btn').addEventListener('click', async () => {
+    const name = document.getElementById('req-name').value.trim();
+    const email = document.getElementById('req-email').value.trim();
+    const jobTitle = document.getElementById('req-title').value.trim();
+    const message = document.getElementById('req-message').value.trim();
+    const errEl = document.getElementById('request-error');
+    const btn = document.getElementById('submit-request-btn');
+    errEl.style.display = 'none';
+    if (!name || !email) {
+      errEl.textContent = 'Full name and email address are required.';
+      errEl.style.display = 'block';
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'SENDING…';
+    try {
+      const res = await fetch(`${WORKER_URL}/api/access-request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, jobTitle, message })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        document.getElementById('req-name').value = '';
+        document.getElementById('req-email').value = '';
+        document.getElementById('req-title').value = '';
+        document.getElementById('req-message').value = '';
+        document.getElementById('request-success').style.display = 'block';
+        btn.textContent = 'REQUEST SENT';
+      } else {
+        errEl.textContent = data.error || 'Could not submit — please try again.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'SUBMIT REQUEST';
+      }
+    } catch(e) {
+      errEl.textContent = 'Connection error — check your network and try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'SUBMIT REQUEST';
+    }
   });
 })();
 
