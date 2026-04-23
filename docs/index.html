@@ -916,6 +916,56 @@
       font-size: 12px; line-height: 1.5;
     }
     .rtr-reprisal-banner strong { color: #f87171; }
+    /* ── LOGIN OVERLAY ── */
+    #ws-login-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--navy);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-card {
+      background: var(--navy2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px 28px;
+      width: 92%;
+      max-width: 360px;
+    }
+    .login-logo { color: var(--gold); font-size: 22px; font-weight: 800; letter-spacing: 2px; margin-bottom: 4px; }
+    .login-sub { color: var(--text-dim); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px; }
+    .login-hint { color: var(--text-dim); font-size: 12px; line-height: 1.6; margin-bottom: 20px; }
+    .login-error { color: #f87171; font-size: 12px; margin-bottom: 12px; display: none; }
+    #login-code {
+      width: 100%;
+      background: var(--navy);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      box-sizing: border-box;
+      letter-spacing: 2px;
+    }
+    #login-code:focus { outline: none; border-color: var(--gold); }
+    .logout-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 3px;
+      margin-left: 8px;
+    }
+    .logout-btn:hover { border-color: var(--text-dim); color: var(--text); }
     /* ── TRIGGER DETECTION BANNER ── */
     .trigger-banner {
       background: rgba(212,160,23,0.07);
@@ -1160,6 +1210,7 @@
             <p>Ontario Labour Defense · Multi-Agent</p>
           </div>
           <button id="header-install-btn" title="Install WorkerShield as an app" style="margin-left:auto;background:var(--gold);color:var(--navy);border:none;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;padding:8px 10px;cursor:pointer;border-radius:3px;white-space:nowrap;">📲 INSTALL</button>
+          <button class="logout-btn" onclick="logout()" title="Sign out">SIGN OUT</button>
         </div>
       </div>
 
@@ -1550,6 +1601,18 @@
   </div>
 
 </div><!-- /app -->
+
+<!-- Login overlay (shown by default; hidden by JS when auth valid) -->
+<div id="ws-login-overlay">
+  <div class="login-card">
+    <div class="login-logo">🛡️ WORKERSHIELD</div>
+    <div class="login-sub">Unifor Local 1285 — Restricted Access</div>
+    <div class="login-hint">This tool is for authorized Unifor Local 1285 stewards and JHSC co-chairs only. Enter your access code to continue.</div>
+    <div id="login-error" class="login-error"></div>
+    <input type="password" id="login-code" placeholder="ACCESS CODE" autocomplete="current-password" spellcheck="false">
+    <button class="btn btn-primary" id="login-btn" style="width:100%">ENTER WORKERSHIELD</button>
+  </div>
+</div>
 
 <!-- Confidentiality splash -->
 <div id="ws-splash" class="ws-splash" style="display:none">
@@ -1977,7 +2040,7 @@ document.getElementById('inc-save-btn').addEventListener('click', async () => {
   try {
     const res = await fetch(`${WORKER_URL}/api/incidents`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders(),
       body: JSON.stringify(payload)
     });
     const data = await res.json();
@@ -2011,7 +2074,7 @@ async function loadIncidents() {
   empty.style.display = 'none';
   list.innerHTML = '';
   try {
-    const res = await fetch(`${WORKER_URL}/api/incidents`);
+    const res = await fetch(`${WORKER_URL}/api/incidents`, { headers: authHeaders() });
     const data = await res.json();
     incidents = data.incidents || [];
     renderIncidents();
@@ -2100,7 +2163,7 @@ function buildIncidentCard(inc) {
     const ok = await showConfirm('Delete this incident? This cannot be undone.');
     if (!ok) return;
     try {
-      await fetch(`${WORKER_URL}/api/incidents/${inc.id}`, { method: 'DELETE' });
+      await fetch(`${WORKER_URL}/api/incidents/${inc.id}`, { method: 'DELETE', headers: authHeaders() });
       incidents = incidents.filter(i => i.id !== inc.id);
       renderIncidents();
       showToast('Incident deleted');
@@ -2241,7 +2304,7 @@ document.getElementById('grv-save-btn').addEventListener('click', async () => {
   try {
     const res = await fetch(`${WORKER_URL}/api/grievances`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders(),
       body: JSON.stringify(payload)
     });
     const data = await res.json();
@@ -2276,7 +2339,7 @@ async function loadGrievances() {
   empty.style.display = 'none';
   list.innerHTML = '';
   try {
-    const res = await fetch(`${WORKER_URL}/api/grievances`);
+    const res = await fetch(`${WORKER_URL}/api/grievances`, { headers: authHeaders() });
     const data = await res.json();
     grievances = data.grievances || [];
     // Sort by deadline soonest first
@@ -2377,7 +2440,7 @@ function buildGrievanceCard(grv) {
     const ok = await showConfirm('Delete this grievance? This cannot be undone.');
     if (!ok) return;
     try {
-      await fetch(`${WORKER_URL}/api/grievances/${grv.id}`, { method: 'DELETE' });
+      await fetch(`${WORKER_URL}/api/grievances/${grv.id}`, { method: 'DELETE', headers: authHeaders() });
       grievances = grievances.filter(g => g.id !== grv.id);
       renderGrievances();
       showToast('Grievance deleted');
@@ -2484,10 +2547,11 @@ function setAgentOutput(key, text) {
 async function callAgent(agentType, problem, context, previousOutputs) {
   const res = await fetch(`${WORKER_URL}/api/agent`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(),
     body: JSON.stringify({ agentType, problem, context, previousOutputs })
   });
   if (!res.ok) {
+    if (res.status === 401) { handleUnauthorized(); throw new Error('Unauthorized'); }
     const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
     throw new Error(err.error || `Agent ${agentType} failed`);
   }
@@ -2741,14 +2805,104 @@ document.getElementById('copy-btn').addEventListener('click', async () => {
 // Check deadline alerts on load (after brief delay to let grievances load)
 setTimeout(checkDeadlines, 1000);
 
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+
+const WS_TOKEN_KEY = 'ws_auth_token';
+const WS_TOKEN_TS_KEY = 'ws_auth_ts';
+const TOKEN_EXPIRY_DAYS = 30;
+
+function getStoredToken() {
+  try {
+    const token = localStorage.getItem(WS_TOKEN_KEY);
+    const ts = parseInt(localStorage.getItem(WS_TOKEN_TS_KEY) || '0', 10);
+    if (!token || !ts) return null;
+    if (Math.floor(Date.now() / 1000) - ts > TOKEN_EXPIRY_DAYS * 86400) {
+      localStorage.removeItem(WS_TOKEN_KEY);
+      localStorage.removeItem(WS_TOKEN_TS_KEY);
+      return null;
+    }
+    return token;
+  } catch(e) { return null; }
+}
+
+function clearStoredToken() {
+  try {
+    localStorage.removeItem(WS_TOKEN_KEY);
+    localStorage.removeItem(WS_TOKEN_TS_KEY);
+  } catch(e) {}
+}
+
+function authHeaders(extra) {
+  const token = getStoredToken();
+  const h = Object.assign({ 'Content-Type': 'application/json' }, extra || {});
+  if (token) h['Authorization'] = 'Bearer ' + token;
+  return h;
+}
+
+function handleUnauthorized() {
+  clearStoredToken();
+  showToast('Session expired — please sign in again', 'var(--red)');
+  setTimeout(() => location.reload(), 1500);
+}
+
+async function doLogin() {
+  const code = document.getElementById('login-code').value.trim();
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+  errEl.style.display = 'none';
+  if (!code) { errEl.textContent = 'Enter the access code.'; errEl.style.display = 'block'; return; }
+  btn.disabled = true;
+  btn.textContent = 'VERIFYING…';
+  try {
+    const res = await fetch(`${WORKER_URL}/api/auth`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    if (res.ok && data.token) {
+      localStorage.setItem(WS_TOKEN_KEY, data.token);
+      localStorage.setItem(WS_TOKEN_TS_KEY, String(Math.floor(Date.now() / 1000)));
+      document.getElementById('ws-login-overlay').style.display = 'none';
+      if (!localStorage.getItem('ws_accepted_v2')) {
+        document.getElementById('ws-splash').style.display = 'flex';
+      }
+    } else {
+      errEl.textContent = data.error || 'Invalid access code. Contact your steward.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'ENTER WORKERSHIELD';
+    }
+  } catch(e) {
+    errEl.textContent = 'Connection error — check your network and try again.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'ENTER WORKERSHIELD';
+  }
+}
+
+function logout() {
+  clearStoredToken();
+  try { localStorage.removeItem('ws_accepted_v2'); } catch(e) {}
+  location.reload();
+}
+
+(function initAuth(){
+  const token = getStoredToken();
+  if (token) {
+    document.getElementById('ws-login-overlay').style.display = 'none';
+    if (!localStorage.getItem('ws_accepted_v2')) {
+      document.getElementById('ws-splash').style.display = 'flex';
+    }
+  }
+  document.getElementById('login-btn').addEventListener('click', doLogin);
+  document.getElementById('login-code').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+})();
+
 // ── Confidentiality Splash ───────────────────────────────────────────────────
 (function initSplash(){
-  try {
-    if (!localStorage.getItem('ws_accepted_v2')) {
-      const el = document.getElementById('ws-splash');
-      if (el) el.style.display = 'flex';
-    }
-  } catch(e) {}
   const btn = document.getElementById('ws-splash-btn');
   if (btn) btn.addEventListener('click', () => {
     try { localStorage.setItem('ws_accepted_v2', new Date().toISOString()); } catch(e) {}
