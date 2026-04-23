@@ -11,10 +11,36 @@ const ALLOWED_ORIGIN = 'https://kevindm1989-afk.github.io';
 const CORS = {
   'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   'Vary': 'Origin',
   'Content-Type': 'application/json'
 };
+
+// ─── AUTH HELPERS ─────────────────────────────────────────────────────────────
+
+async function signHmac(secret, data) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data));
+  return btoa(String.fromCharCode(...new Uint8Array(sig)));
+}
+
+async function verifyToken(request, env) {
+  const authHeader = request.headers.get('Authorization') || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+  if (!token) return false;
+  const dot = token.indexOf('.');
+  if (dot === -1) return false;
+  const tsStr = token.slice(0, dot);
+  const hmac  = token.slice(dot + 1);
+  const ts = parseInt(tsStr, 10);
+  if (isNaN(ts)) return false;
+  if (Math.floor(Date.now() / 1000) - ts > 30 * 24 * 3600) return false;
+  const expected = await signHmac(env.SESSION_SECRET, `${env.ACCESS_CODE}:${ts}`);
+  return expected === hmac;
+}
 
 // ─── RATE LIMITING (in-memory, per-isolate) ─────────────────────────────────
 // 30 requests per IP per hour
@@ -456,7 +482,7 @@ export default {
     }
 
     // ── ENV VALIDATION ──
-    const requiredEnv = ['ANTHROPIC_API_KEY', 'GITHUB_TOKEN', 'GITHUB_OWNER', 'GITHUB_DATA_REPO'];
+    const requiredEnv = ['ANTHROPIC_API_KEY', 'GITHUB_TOKEN', 'GITHUB_OWNER', 'GITHUB_DATA_REPO', 'ACCESS_CODE', 'SESSION_SECRET'];
     const missing = requiredEnv.filter(k => !env[k]);
     if (missing.length) {
       return new Response(
@@ -478,6 +504,35 @@ export default {
 
     const url = new URL(request.url);
     const path = url.pathname;
+
+    // ── AUTH ENDPOINT (public — no token required) ──
+    if (path === '/api/auth' && request.method === 'POST') {
+      try {
+        const { code } = await request.json();
+        if (!code || code.trim() !== env.ACCESS_CODE) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid access code.' }),
+            { status: 401, headers: CORS }
+          );
+        }
+        const ts = Math.floor(Date.now() / 1000);
+        const hmac = await signHmac(env.SESSION_SECRET, `${env.ACCESS_CODE}:${ts}`);
+        return new Response(
+          JSON.stringify({ token: `${ts}.${hmac}` }),
+          { headers: CORS }
+        );
+      } catch (err) {
+        return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: CORS });
+      }
+    }
+
+    // ── TOKEN GUARD — all routes below require a valid token ──
+    if (!(await verifyToken(request, env))) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized. Please log in.' }),
+        { status: 401, headers: CORS }
+      );
+    }
 
     // ── AGENT API ──
     if (path === '/api/agent' && request.method === 'POST') {
